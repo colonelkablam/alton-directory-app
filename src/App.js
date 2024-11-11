@@ -93,8 +93,14 @@ function EnhancedServiceDirectory() {
   );
 
     const matchesAudience = filterAudience.length === 0 || filterAudience.includes(activity.audience);
-    const costType = activity.cost === 'Free' ? 'Free' : activity.cost.startsWith('£') && parseFloat(activity.cost.slice(1)) < 10 ? 'Low Cost' : 'Other';
-    const matchesCost = filterCost.length === 0 || filterCost.includes(costType);
+// Check that activity.cost is defined and not empty
+const costType = activity.cost
+  ? activity.cost === 'Free'
+    ? 'Free'
+    : activity.cost.startsWith('£') && parseFloat(activity.cost.slice(1)) < 10
+    ? 'Low Cost'
+    : 'Other'
+  : 'Other';    const matchesCost = filterCost.length === 0 || filterCost.includes(costType);
     const matchesDay = filterDays.length === 0 || filterDays.some(day => activity.daysOfWeek.includes(day));
 
   // Add check for one-off or irregular events based on the checkbox state
