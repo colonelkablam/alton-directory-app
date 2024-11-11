@@ -1,38 +1,123 @@
-.App {
-  text-align: center;
+/* style.css */
+
+body, html {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.container {
+  padding: 20px;
+  max-width: 100%; /* Allows full screen width */
+  margin: 0 auto;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+h1 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.search-input {
+  width: 30%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.activities {
+  margin-top: 16px; /* Keeps it as a basic container with no grid */
+}
+
+/* General card styling */
+.card {
+  border: 1px solid #ddd;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+/* .cards-view as the primary grid container */
+.cards-view {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 300px));
+  gap: 16px;
+  margin-top: 0px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.card-description {
+  color: #666;
+}
+
+.card-details {
+  margin-top: 10px;
+}
+
+.card-cost {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #19963f;
+}
+
+
+.detail {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  gap: 5px;
+  font-size: 14px;
 }
 
-.App-link {
-  color: #61dafb;
+.icon {
+  width: 16px;
+  height: 16px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Filter button styles */
+.filter-section {
+  margin-bottom: 10px;
+}
+
+.filter-button {
+  padding: 8px 12px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.filter-button.active {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+/* Tab button styles */
+.tab-button {
+  padding: 8px 12px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.tab-button:hover {
+  background-color: #e0e0e0; /* Light hover effect */
+}
+
+.tab-button.active {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
 }
