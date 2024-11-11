@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { MapPin, Clock, User } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MapPin, Clock, User, PoundSterling  } from 'lucide-react';
 import './App.css';
-import activities from './data'; // Import activities data
+//import activities from './data'; // Import activities data
+import { fetchActivities } from './data.js'; // get data from googlesheet
 
 
 // Card Component
@@ -13,26 +14,47 @@ function ActivityCard({ activity }) {
         <p className="card-description">{activity.description}</p>
         <div className="card-details">
           <div className="detail">
-            <span className="icon"><MapPin size={16} /></span>
+            <span className="icon">
+              <MapPin size={16} />
+            </span>
             <span>{activity.venue}</span>
           </div>
-          <div className="detail">
-            <span className="icon"><Clock size={16} /></span>
-            <span>{activity.time}</span>
+          <div className="detail2">
+            <span className="icon">
+              <Clock size={16} />
+            </span>
+            <span>
+              {activity.oneOffDate && (
+                <>
+                  {activity.oneOffDate}
+                  <br />
+                </>
+              )}
+              {activity.time}
+              <br />
+              {activity.daysOfWeek.map((day) => day.toUpperCase().slice(0, 3)).join(' ')}
+            </span>
           </div>
           <div className="detail">
-            <span className="icon"><User size={16} /></span>
+            <span className="icon">
+              <User size={16} />
+            </span>
             <span>{activity.organiser}</span>
           </div>
         </div>
-        <div className="card-cost">
-          <span className="font-medium">Cost: </span>
+        <div className="detail2">
+          <span className="icon">
+            <PoundSterling size={16} /> {/* Pound icon from lucide-react */}
+          </span>
+          <span>Cost: </span>
           <span>{activity.cost}</span>
         </div>
       </div>
     </div>
   );
 }
+
+
 
 // Main Component
 function EnhancedServiceDirectory() {
@@ -41,21 +63,46 @@ function EnhancedServiceDirectory() {
   const [filterCost, setFilterCost] = useState([]);
   const [filterDays, setFilterDays] = useState([]);
   const [activeTab, setActiveTab] = useState('cards'); // state for active tab
+  const [isOneOff, setIsOneOff] = useState(false); // State for the one-off checkbox
 
+  const [activities, setActivities] = useState([]);
+
+  useEffect(() => {
+    async function loadActivities() {
+      const data = await fetchActivities();
+      setActivities(data);
+    }
+
+    loadActivities();
+  }, []);
 
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const audiences = ['Children', 'Adults', 'Everyone'];
+  const audiences = ['Children', 'Adults', 'Family', 'Everyone'];
   const costs = ['Free', 'Low Cost', 'Other'];
 
-
   const filteredActivities = activities.filter(activity => {
-    const matchesSearch = activity.name.toLowerCase().includes(searchTerm.toLowerCase());
+  // Split the search term into tokens by spaces and filter out any empty strings
+  const searchTokens = searchTerm.toLowerCase().split(' ').filter(token => token);
+
+  // Check if each token is included in any of the fields
+  const matchesSearch = searchTokens.every(token =>
+    activity.name.toLowerCase().includes(token) ||
+    activity.description.toLowerCase().includes(token) ||
+    activity.venue.toLowerCase().includes(token) ||
+    activity.organiser.toLowerCase().includes(token)
+  );
+
     const matchesAudience = filterAudience.length === 0 || filterAudience.includes(activity.audience);
     const costType = activity.cost === 'Free' ? 'Free' : activity.cost.startsWith('£') && parseFloat(activity.cost.slice(1)) < 10 ? 'Low Cost' : 'Other';
     const matchesCost = filterCost.length === 0 || filterCost.includes(costType);
-    const day = daysOfWeek.find(day => activity.time.toLowerCase().includes(day.toLowerCase()));
-    const matchesDay = filterDays.length === 0 || (day && filterDays.includes(day));
-    return matchesSearch && matchesAudience && matchesCost && matchesDay;
+    const matchesDay = filterDays.length === 0 || filterDays.some(day => activity.daysOfWeek.includes(day));
+
+  // Add check for one-off or irregular events based on the checkbox state
+  const matchesOneOff = isOneOff
+    ? activity.timePeriod === 'One-off Event' || activity.timePeriod === 'Other (irregular)'
+    : true;
+
+    return matchesSearch && matchesAudience && matchesCost && matchesDay && matchesOneOff;
   });
 
   function toggleFilter(setFilter, value) {
@@ -72,6 +119,18 @@ function EnhancedServiceDirectory() {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
+
+      {/* One-Off Checkbox */}
+      <div className="filter-section">
+        <label>
+          <input
+            type="checkbox"
+            checked={isOneOff}
+            onChange={(e) => setIsOneOff(e.target.checked)}
+          />
+          One-Off or Irregular Events
+        </label>
+      </div>
 
       <div className="filter-section">
         <h3>Days</h3>
@@ -114,32 +173,31 @@ function EnhancedServiceDirectory() {
 
       {/* Tabs for Viewing Options */}
       <div className="view-tabs">
-      <h3>Event View</h3>
-
+        <h3 className="event-view-title">Event Views</h3>
         <button
           onClick={() => setActiveTab('cards')}
-          className={activeTab === 'cards' ? 'tab-button active' : 'tab-button'}
+          className={`tab-button tab-blue ${activeTab === 'cards' ? 'active' : ''}`}
         >
           Cards
         </button>
         <button
+          onClick={() => setActiveTab('day')}
+          className={`tab-button tab-purple ${activeTab === 'day' ? 'active' : ''}`}
+        >
+          Days of the Week
+        </button>
+        <button
           onClick={() => setActiveTab('list')}
-          className={activeTab === 'list' ? 'tab-button active' : 'tab-button'}
+          className={`tab-button tab-green ${activeTab === 'list' ? 'active' : ''}`}
         >
           List
         </button>
-        <button
-          onClick={() => setActiveTab('day')}
-          className={activeTab === 'day' ? 'tab-button active' : 'tab-button'}
-        >
-          Day of the Week
-        </button>
       </div>
 
-{/* Content Based on Active Tab */}
-<div className="activities">
+      {/* Content Based on Active Tab */}
+      <div className="activities">
         {activeTab === 'cards' && (
-          <div className="cards-view">
+          <div className="cards-view tab-content-blue">
             {filteredActivities.map((activity, index) => (
               <ActivityCard key={index} activity={activity} />
             ))}
@@ -147,42 +205,58 @@ function EnhancedServiceDirectory() {
         )}
 
         {activeTab === 'list' && (
-          <table className="list-view">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Audience</th>
-                <th>Venue</th>
-                <th>Time</th>
-                <th>Organiser</th>
-                <th>Cost</th>
-                <th>Contact</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredActivities.map((activity, index) => (
-                <tr key={index}>
-                  <td>{activity.name}</td>
-                  <td>{activity.description}</td>
-                  <td>{activity.audience}</td>
-                  <td>{activity.venue}</td>
-                  <td>{activity.time}</td>
-                  <td>{activity.organiser}</td>
-                  <td>{activity.cost}</td>
-                  <td>{activity.contact || 'N/A'}</td>
+          <div className="list-view tab-content-green">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Audience</th>
+                  <th>Venue</th>
+                  <th>Day</th>
+                  <th>Time</th>
+                  <th>One Off Date</th>
+                  <th>Cost</th>
+                  <th>Organiser</th>
+                  <th>Contact</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredActivities.map((activity, index) => (
+                  <tr key={index}>
+                    <td>{activity.name}</td>
+                    <td>{activity.description}</td>
+                    <td>{activity.audience}</td>
+                    <td>{activity.venue}</td>
+                    <td>
+                      {activity.daysOfWeek.map((day, idx) => (
+                        <React.Fragment key={idx}>
+                          {day}
+                          <br />
+                        </React.Fragment>
+                      ))}
+                    </td>
+                    <td>{activity.time}</td>
+                    <td>{activity.oneOffDate || 'N/A'}</td>
+                    <td>{activity.cost}</td>
+                    <td>{activity.organiser}</td>
+                    <td>{activity.contact || 'N/A'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
 
         {activeTab === 'day' && (
-          <div className="day-view">
-            {daysOfWeek.map(day => {
+          <div className="day-view tab-content-purple">
+            {(filterDays.length > 0 ? filterDays : daysOfWeek).map(day => {
+              // Show activities only on the filtered days if filterDays has selections
               const dayActivities = filteredActivities.filter(activity =>
-                activity.time.toLowerCase().includes(day.toLowerCase())
+                activity.daysOfWeek.includes(day) // Only include activities available on the selected day
               );
+            
+              // Render only if there are activities for the specific day
               return dayActivities.length > 0 ? (
                 <div key={day} className="day-section">
                   <h3>{day}</h3>
@@ -198,6 +272,7 @@ function EnhancedServiceDirectory() {
     </div>
   );
 }
+
 
 // App Component
 function App() {
