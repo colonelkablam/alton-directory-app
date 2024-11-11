@@ -81,32 +81,33 @@ function EnhancedServiceDirectory() {
   const costs = ['Free', 'Low Cost', 'Other'];
 
   const filteredActivities = activities.filter(activity => {
-  // Split the search term into tokens by spaces and filter out any empty strings
-  const searchTokens = searchTerm.toLowerCase().split(' ').filter(token => token);
+    // Split the search term into tokens by spaces and filter out any empty strings
+    const searchTokens = searchTerm.toLowerCase().split(' ').filter(token => token);
 
-  // Check if each token is included in any of the fields
-  const matchesSearch = searchTokens.every(token =>
-    activity.name.toLowerCase().includes(token) ||
-    activity.description.toLowerCase().includes(token) ||
-    activity.venue.toLowerCase().includes(token) ||
-    activity.organiser.toLowerCase().includes(token)
-  );
+    // Check if each token is included in any of the fields
+    const matchesSearch = searchTokens.every(token =>
+      activity.name.toLowerCase().includes(token) ||
+      activity.description.toLowerCase().includes(token) ||
+      activity.venue.toLowerCase().includes(token) ||
+      activity.organiser.toLowerCase().includes(token)
+    );
 
     const matchesAudience = filterAudience.length === 0 || filterAudience.includes(activity.audience);
-// Check that activity.cost is defined and not empty
-const costType = activity.cost
-  ? activity.cost === 'Free'
-    ? 'Free'
-    : activity.cost.startsWith('£') && parseFloat(activity.cost.slice(1)) < 10
-    ? 'Low Cost'
-    : 'Other'
-  : 'Other';    const matchesCost = filterCost.length === 0 || filterCost.includes(costType);
+    
+    // Check that activity.cost is defined and not empty
+    const costType = activity.cost
+        ? activity.cost === 'Free'
+        ? 'Free'
+        : activity.cost.startsWith('£') && parseFloat(activity.cost.slice(1)) < 10
+        ? 'Low Cost'
+        : 'Other'
+        : 'Other';    const matchesCost = filterCost.length === 0 || filterCost.includes(costType);
     const matchesDay = filterDays.length === 0 || filterDays.some(day => activity.daysOfWeek.includes(day));
 
-  // Add check for one-off or irregular events based on the checkbox state
-  const matchesOneOff = isOneOff
-    ? activity.timePeriod === 'One-off Event' || activity.timePeriod === 'Other (irregular)'
-    : true;
+    // Add check for one-off or irregular events based on the checkbox state
+    const matchesOneOff = isOneOff
+        ? activity.timePeriod === 'One-off Event' || activity.timePeriod === 'Other (irregular)'
+        : true;
 
     return matchesSearch && matchesAudience && matchesCost && matchesDay && matchesOneOff;
   });
