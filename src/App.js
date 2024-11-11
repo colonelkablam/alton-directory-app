@@ -191,7 +191,7 @@ function EnhancedServiceDirectory() {
           onClick={() => setActiveTab('day')}
           className={`tab-button tab-purple ${activeTab === 'day' ? 'active' : ''}`}
         >
-          Days of the Week
+          Week Days
         </button>
         <button
           onClick={() => setActiveTab('list')}
