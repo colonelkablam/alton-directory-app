@@ -50,27 +50,30 @@ h1 {
 }
 
 /* .cards-view as the primary grid container */
-
-@media (max-width: 830px) {
-  .cards-view {
-    grid-template-columns: 1fr; /* Make cards full-width on small screens */
-  }
-}
-
 .cards-view {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 360px));
+  grid-template-columns: repeat(auto-fill, minmax(370px, 370px));
   gap: 16px;
   margin-top: 0px;
   justify-content: center; /* Centers the cards within the container */
+}
 
+
+@media (max-width: 830px) {
+  .cards-view {
+    display: grid; /* Ensure grid display on smaller screens */
+    grid-template-columns: 1fr; /* Make cards full-width on small screens */
+  }
+
+  .container {
+    padding: 0 10px; /* changes padding for smaller screens */
+  }
 }
 
 .card-title {
   font-size: 20px;
   font-weight: bold;
   margin: 0 0 5px 0;
-
 }
 
 .card-description {
@@ -325,7 +328,7 @@ h1 {
 
 .week-day-title {
   font-size: 1.5em;
-  margin-bottom: 10px;
+  margin: 0px 0 10px 0;
 }
 
 .activities-row {
@@ -337,5 +340,5 @@ h1 {
 }
 
 .activity-card-wrapper {
-  max-width: 380px; /* Optional max width to control card sizing */
+  max-width: 370px; /* Optional max width to control card sizing */
 }
