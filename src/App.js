@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Clock, User, PoundSterling  } from 'lucide-react';
+import { MapPin, Clock, User, PoundSterling, Globe } from 'lucide-react';
 import './App.css';
 //import activities from './data'; // Import activities data
 import { fetchActivities } from './data.js'; // get data from googlesheet
@@ -7,32 +7,33 @@ import { fetchActivities } from './data.js'; // get data from googlesheet
 
 // Card Component
 function ActivityCard({ activity }) {
+
+// Format the time-related information into a single string
+const timeInfo = activity.timePeriod === 'One-off Event'
+    ? `${activity.oneOffDate} (${activity.timePeriod})`
+    : activity.timePeriod;
+
   return (
     <div className="card">
       <div className="card-content">
-        <h3 className="card-title">{activity.name}</h3>
-        <p className="card-description">{activity.description}</p>
+        <h3 className="card-title two-line-textbox">{activity.name}</h3>
+        <p className="card-description scrollable-textbox">{activity.description}</p>
         <div className="card-details">
-          <div className="detail">
+          <div className="detail detail-highlight">
             <span className="icon">
               <MapPin size={16} />
             </span>
-            <span>{activity.venue}</span>
+            <span class="two-line-textbox">{activity.venue}</span>
           </div>
-          <div className="detail2">
+          <div className="detail">
             <span className="icon">
               <Clock size={16} />
             </span>
+            {/* Separate elements for each part */}
             <span>
-              {activity.oneOffDate && (
-                <>
-                  {activity.oneOffDate}
-                  <br />
-                </>
-              )}
-              {activity.time}
-              <br />
-              {activity.daysOfWeek.map((day) => day.toUpperCase().slice(0, 3)).join(' ')}
+              <div class="one-line-textbox">{timeInfo}</div>
+              <div class="one-line-textbox">{activity.time}</div>
+              <div class="one-line-textbox">{activity.daysOfWeek.map(day => day.toUpperCase().slice(0, 3)).join(' ')}</div>
             </span>
           </div>
           <div className="detail">
@@ -41,13 +42,25 @@ function ActivityCard({ activity }) {
             </span>
             <span>{activity.organiser}</span>
           </div>
-        </div>
-        <div className="detail2">
-          <span className="icon">
-            <PoundSterling size={16} /> {/* Pound icon from lucide-react */}
-          </span>
-          <span>Cost: </span>
-          <span>{activity.cost}</span>
+          <div className="detail">
+            <span className="icon">
+              <PoundSterling size={16} /> {/* Pound icon from lucide-react */}
+            </span>
+            <span>Cost: </span>
+            <span>{activity.cost}</span>
+          </div>
+          <div className="detail">
+            <span className="icon">
+              <Globe size={16} /> {/* Weblink icon */}
+            </span>
+            {activity.fisLink ? (
+              <a href={activity.fisLink} target="_blank" rel="noopener noreferrer">
+                Family Information Service Link
+              </a>
+            ) : (
+              <span>No FIS link provided</span>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -58,21 +71,35 @@ function ActivityCard({ activity }) {
 
 // Main Component
 function EnhancedServiceDirectory() {
+
+  // define the states for my search and filtering
   const [searchTerm, setSearchTerm] = useState('');
   const [filterAudience, setFilterAudience] = useState([]);
   const [filterCost, setFilterCost] = useState([]);
   const [filterDays, setFilterDays] = useState([]);
-  const [activeTab, setActiveTab] = useState('cards'); // state for active tab
   const [isOneOff, setIsOneOff] = useState(false); // State for the one-off checkbox
 
+  // state for active tab view
+  const [activeTab, setActiveTab] = useState('days');
+
+  // initialise activities array
   const [activities, setActivities] = useState([]);
 
+  // Function to reset search term and filters
+  function resetFilters() {
+    setSearchTerm(''); // Clear the search input
+    setFilterAudience([]); // Reset audience filter to default (empty array)
+    setFilterCost([]); // Reset cost filter to default (empty array)
+    setFilterDays([]); // Reset days filter to default (empty array)
+    setIsOneOff(false);
+  }
+
+  // load in the activities from the googlesheet using fetchActivities (in data.js)
   useEffect(() => {
     async function loadActivities() {
       const data = await fetchActivities();
       setActivities(data);
     }
-
     loadActivities();
   }, []);
 
@@ -119,7 +146,7 @@ function EnhancedServiceDirectory() {
 
     // Add check for one-off or irregular events based on the checkbox state
     const matchesOneOff = isOneOff
-        ? activity.timePeriod === 'One-off Event' || activity.timePeriod === 'Other (irregular)'
+        ? activity.timePeriod === 'One-off Event' || activity.timePeriod === 'Other (non-repeating)'
         : true;
 
     return matchesSearch && matchesAudience && matchesCost && matchesDay && matchesOneOff;
@@ -132,6 +159,7 @@ function EnhancedServiceDirectory() {
   return (
     <div className="container">
       <h1>Community Activities</h1>
+      <div className="search-bar">
       <input
         type="text"
         placeholder="Search activities..."
@@ -139,6 +167,16 @@ function EnhancedServiceDirectory() {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
+      <button
+        className="clear-search-button"
+        onClick={() => {
+          resetFilters(); // Function to reset filters to unselected and clear search term
+    }}
+  >
+    Clear Search
+  </button>
+      </div>
+
 
       {/* One-Off Checkbox */}
       <div className="filter-section">
@@ -148,7 +186,7 @@ function EnhancedServiceDirectory() {
             checked={isOneOff}
             onChange={(e) => setIsOneOff(e.target.checked)}
           />
-          One-off or Irregular Events
+          One-off or events that do not repeat every week or month
         </label>
       </div>
 
@@ -195,20 +233,20 @@ function EnhancedServiceDirectory() {
       <div className="view-tabs">
         <h3 className="event-view-title">Event View</h3>
         <button
-          onClick={() => setActiveTab('cards')}
-          className={`tab-button tab-blue ${activeTab === 'cards' ? 'active' : ''}`}
+          onClick={() => setActiveTab('days')}
+          className={`tab-button tab-blue ${activeTab === 'days' ? 'active' : ''}`}
         >
-          Card
+          Days
         </button>
         <button
-          onClick={() => setActiveTab('day')}
-          className={`tab-button tab-purple ${activeTab === 'day' ? 'active' : ''}`}
+          onClick={() => setActiveTab('cards')}
+          className={`tab-button tab-green ${activeTab === 'cards' ? 'active' : ''}`}
         >
-          Week Day
+          Cards
         </button>
         <button
           onClick={() => setActiveTab('list')}
-          className={`tab-button tab-green ${activeTab === 'list' ? 'active' : ''}`}
+          className={`tab-button tab-purple ${activeTab === 'list' ? 'active' : ''}`}
         >
           List
         </button>
@@ -216,16 +254,9 @@ function EnhancedServiceDirectory() {
 
       {/* Content Based on Active Tab */}
       <div className="activities">
-        {activeTab === 'cards' && (
-          <div className="cards-view tab-content-blue">
-            {filteredActivities.map((activity, index) => (
-              <ActivityCard key={index} activity={activity} />
-            ))}
-          </div>
-        )}
 
         {activeTab === 'list' && (
-          <div className="list-view tab-content-green">
+          <div className="list-view tab-content-purple">
             <table>
               <thead>
                 <tr>
@@ -268,26 +299,39 @@ function EnhancedServiceDirectory() {
           </div>
         )}
 
-        {activeTab === 'day' && (
-          <div className="day-view tab-content-purple">
+        {activeTab === 'cards' && (
+          <div className="cards-view tab-content-green">
+            {filteredActivities.map((activity, index) => (
+              <ActivityCard key={index} activity={activity} />
+            ))}
+          </div>
+        )}  
+
+        {activeTab === 'days' && (
+          <div className="day-view tab-content-blue">
             {(filterDays.length > 0 ? filterDays : daysOfWeek).map(day => {
-              // Show activities only on the filtered days if filterDays has selections
+              // Filter activities for the selected day
               const dayActivities = filteredActivities.filter(activity =>
-                activity.daysOfWeek.includes(day) // Only include activities available on the selected day
+                activity.daysOfWeek.includes(day)
               );
             
               // Render only if there are activities for the specific day
               return dayActivities.length > 0 ? (
                 <div key={day} className="day-section">
-                  <h3 class="week-day-title">{day}</h3>
-                  {dayActivities.map((activity, index) => (
-                    <ActivityCard key={index} activity={activity} />
-                  ))}
+                  <h3 className="week-day-title">{day}</h3>
+                  <div className="activities-row">
+                    {dayActivities.map((activity, index) => (
+                      <div key={index} className="activity-card-wrapper">
+                        <ActivityCard activity={activity} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ) : null;
             })}
           </div>
         )}
+
       </div>
     </div>
   );

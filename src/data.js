@@ -45,6 +45,8 @@ export async function fetchActivities() {
               organiser: row[9],
               cost: row[12],
               contact: row[13],
+              fisLink: row[18]
+
             };
         });
 
