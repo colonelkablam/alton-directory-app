@@ -180,18 +180,18 @@ function EnhancedServiceDirectory() {
 
       {/* Tabs for Viewing Options */}
       <div className="view-tabs">
-        <h3 className="event-view-title">Event Views</h3>
+        <h3 className="event-view-title">Event View</h3>
         <button
           onClick={() => setActiveTab('cards')}
           className={`tab-button tab-blue ${activeTab === 'cards' ? 'active' : ''}`}
         >
-          Cards
+          Card
         </button>
         <button
           onClick={() => setActiveTab('day')}
           className={`tab-button tab-purple ${activeTab === 'day' ? 'active' : ''}`}
         >
-          Week Days
+          Week Day
         </button>
         <button
           onClick={() => setActiveTab('list')}
