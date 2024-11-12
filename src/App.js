@@ -84,24 +84,37 @@ function EnhancedServiceDirectory() {
     // Split the search term into tokens by spaces and filter out any empty strings
     const searchTokens = searchTerm.toLowerCase().split(' ').filter(token => token);
 
-    // Check if each token is included in any of the fields
-    const matchesSearch = searchTokens.every(token =>
+    // Check if the search term is empty or contains only whitespace OR if each token is included in any of the fields
+    const matchesSearch = searchTokens.length === 0 || searchTokens.some(token =>
       activity.name.toLowerCase().includes(token) ||
       activity.description.toLowerCase().includes(token) ||
       activity.venue.toLowerCase().includes(token) ||
       activity.organiser.toLowerCase().includes(token)
     );
 
+    // Determine if the activity matches the audience filter:
+    // - If `filterAudience` is empty (no audience filter applied), all activities match.
+    // - If `filterAudience` contains specific audiences, check if `activity.audience`
+    //   is one of them. If it is, `matchesAudience` will be `true`, otherwise `false`.
     const matchesAudience = filterAudience.length === 0 || filterAudience.includes(activity.audience);
     
     // Check that activity.cost is defined and not empty
-    const costType = activity.cost
-        ? activity.cost === 'Free'
-        ? 'Free'
-        : activity.cost.startsWith('£') && parseFloat(activity.cost.slice(1)) < 10
-        ? 'Low Cost'
-        : 'Other'
-        : 'Other';    const matchesCost = filterCost.length === 0 || filterCost.includes(costType);
+    let costType = 'Other';
+
+    if (activity.cost) {
+        if (activity.cost === 'Free') {
+            costType = 'Free';
+        } else {
+            // Use a regular expression to extract the first number in the cost string
+            const costNumber = parseFloat(activity.cost.match(/\d+(\.\d+)?/));
+            
+            if (!isNaN(costNumber) && costNumber < 10) {
+                costType = 'Low Cost';
+            }
+        }
+    }
+
+    const matchesCost = filterCost.length === 0 || filterCost.includes(costType);
     const matchesDay = filterDays.length === 0 || filterDays.some(day => activity.daysOfWeek.includes(day));
 
     // Add check for one-off or irregular events based on the checkbox state
@@ -135,7 +148,7 @@ function EnhancedServiceDirectory() {
             checked={isOneOff}
             onChange={(e) => setIsOneOff(e.target.checked)}
           />
-          One-Off or Irregular Events
+          One-off or Irregular Events
         </label>
       </div>
 
@@ -266,7 +279,7 @@ function EnhancedServiceDirectory() {
               // Render only if there are activities for the specific day
               return dayActivities.length > 0 ? (
                 <div key={day} className="day-section">
-                  <h3>{day}</h3>
+                  <h3 class="week-day-title">{day}</h3>
                   {dayActivities.map((activity, index) => (
                     <ActivityCard key={index} activity={activity} />
                   ))}

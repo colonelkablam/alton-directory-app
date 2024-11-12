@@ -38,7 +38,8 @@ h1 {
 }
 
 .search-input {
-  width: 30%;
+  width: 95%;
+  max-width: 830px;
   padding: 10px;
   margin-bottom: 20px;
   border: 1px solid #ccc;
@@ -209,6 +210,10 @@ h1 {
 .event-view-title {
   display: inline;
   margin: 0 10px 0 20px;
+}
+
+.week-day-title {
+  color: white;
 }
 
 /* Table styling */
