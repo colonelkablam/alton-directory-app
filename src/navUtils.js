@@ -1,0 +1,43 @@
+// navUtils.js
+
+// Function to get the user's current location
+export function getUserLocation() {
+    return new Promise((resolve, reject) => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    resolve({
+                        lat: position.coords.latitude,
+                        long: position.coords.longitude,
+                    });
+                },
+                (error) => {
+                    console.error("Geolocation error:", error);
+                }
+            );
+        } else {
+            console.warn("Geolocation not supported by this browser.");
+        }
+    });
+}
+
+// Function to calculate the distance between two coordinates
+export function calculateDistance(lat1, lon1, lat2, lon2) {
+    if (lat1 == null || lon1 == null || lat2 == null || lon2 == null) {
+        console.warn("Invalid coordinates for distance calculation");
+        return null; // Return null if any coordinates are missing
+    }
+
+    const R = 6371e3; // Earth's radius in meters
+    const φ1 = (lat1 * Math.PI) / 180;
+    const φ2 = (lat2 * Math.PI) / 180;
+    const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+    const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+
+    const a =
+        Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+        Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c; // Distance in meters
+}
