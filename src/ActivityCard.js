@@ -1,6 +1,6 @@
 // ActivityCard.js
 import React from 'react';
-import { MapPin, Clock, User, PoundSterling, Globe } from 'lucide-react';
+import { MapPin, Clock, User, PoundSterling, Globe, Phone, Users } from 'lucide-react';
 
 function ActivityCard({ activity, togglePin, pinnedActivities }) {
   // Check if this activity is pinned
@@ -14,6 +14,7 @@ function ActivityCard({ activity, togglePin, pinnedActivities }) {
   return (
     <div className="card">
       <div className="card-content">
+
         <div className="card-title-and-checkbox">
           <h3 className="card-title two-line-textbox">{activity.name}</h3>
           <div className="pin-checkbox">
@@ -25,14 +26,29 @@ function ActivityCard({ activity, togglePin, pinnedActivities }) {
             />
           </div>
         </div>
+
         <p className="card-description scrollable-textbox">{activity.description}</p>
+
         <div className="card-details">
+
           <div className="detail detail-highlight">
             <span className="icon">
               <MapPin size={16} />
             </span>
             <span className="two-line-textbox">{activity.venue}</span>
           </div>
+
+          <div className="detail">
+            <span className="icon">
+              <Users size={16} />
+            </span>
+            <span>
+              {activity.audience}
+              {activity.ageRange ? ` ( ${activity.ageRange} )` : ''} {/* Adds ageRange if present */}
+            </span>
+
+            </div>
+
           <div className="detail">
             <span className="icon">
               <Clock size={16} />
@@ -45,12 +61,14 @@ function ActivityCard({ activity, togglePin, pinnedActivities }) {
               </div>
             </span>
           </div>
+
           <div className="detail">
             <span className="icon">
               <User size={16} />
             </span>
             <span>{activity.organiser}</span>
           </div>
+
           <div className="detail">
             <span className="icon">
               <PoundSterling size={16} />
@@ -58,6 +76,14 @@ function ActivityCard({ activity, togglePin, pinnedActivities }) {
             <span>Cost: </span>
             <span>{activity.cost}</span>
           </div>
+
+          <div className="detail">
+            <span className="icon">
+              <Phone size={16} />
+            </span>
+            <span>{activity.contact}</span>
+          </div>
+
           <div className="detail">
             <span className="icon">
               <Globe size={16} />
@@ -70,6 +96,7 @@ function ActivityCard({ activity, togglePin, pinnedActivities }) {
               <span>No FIS link provided</span>
             )}
           </div>
+
         </div>
       </div>
     </div>

@@ -161,6 +161,7 @@ h1 {
 
 .detail-highlight {
   background-color: rgb(228, 228, 228);
+  border-radius: 8px;
 }
 
 .icon {
