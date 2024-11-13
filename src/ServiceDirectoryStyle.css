@@ -206,7 +206,7 @@ h1 {
   display: flex;
   justify-content: space-between; /* Space between input and button */
   align-items: center;
-  max-width: 820px; /* Optional: Set a max-width to align with the input */
+  max-width: 600px; /* Optional: Set a max-width to align with the input */
   margin-bottom: 10px;
 }
 
