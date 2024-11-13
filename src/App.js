@@ -6,7 +6,10 @@ import { fetchActivities } from './data.js'; // get data from googlesheet
 
 
 // Card Component
-function ActivityCard({ activity }) {
+function ActivityCard({ activity, togglePin, pinnedActivities }) {
+
+// Check if this activity is pinned
+const isPinned = pinnedActivities.includes(activity.id);
 
 // Format the time-related information into a single string
 const timeInfo = activity.timePeriod === 'One-off Event'
@@ -16,14 +19,24 @@ const timeInfo = activity.timePeriod === 'One-off Event'
   return (
     <div className="card">
       <div className="card-content">
+        <div className="card-title-and-checkbox">
         <h3 className="card-title two-line-textbox">{activity.name}</h3>
+          <div className="pin-checkbox">
+            <input
+              type="checkbox"
+              checked={isPinned} // Only check if this specific activity is pinned
+              onChange={() => togglePin(activity.id)}
+              title="Pin this activity" // This will show on hover
+            />
+          </div>
+        </div>
         <p className="card-description scrollable-textbox">{activity.description}</p>
         <div className="card-details">
           <div className="detail detail-highlight">
             <span className="icon">
               <MapPin size={16} />
             </span>
-            <span class="two-line-textbox">{activity.venue}</span>
+            <span className="two-line-textbox">{activity.venue}</span>
           </div>
           <div className="detail">
             <span className="icon">
@@ -31,9 +44,9 @@ const timeInfo = activity.timePeriod === 'One-off Event'
             </span>
             {/* Separate elements for each part */}
             <span>
-              <div class="one-line-textbox">{timeInfo}</div>
-              <div class="one-line-textbox">{activity.time}</div>
-              <div class="one-line-textbox">{activity.daysOfWeek.map(day => day.toUpperCase().slice(0, 3)).join(' ')}</div>
+              <div className="one-line-textbox">{timeInfo}</div>
+              <div className="one-line-textbox">{activity.time}</div>
+              <div className="one-line-textbox">{activity.daysOfWeek.map(day => day.toUpperCase().slice(0, 3)).join(' ')}</div>
             </span>
           </div>
           <div className="detail">
@@ -78,6 +91,9 @@ function EnhancedServiceDirectory() {
   const [filterCost, setFilterCost] = useState([]);
   const [filterDays, setFilterDays] = useState([]);
   const [isOneOff, setIsOneOff] = useState(false); // State for the one-off checkbox
+  
+  // Store pinned activity IDs
+  const [pinnedActivities, setPinnedActivities] = useState([]);
 
   // state for active tab view
   const [activeTab, setActiveTab] = useState('days');
@@ -94,19 +110,44 @@ function EnhancedServiceDirectory() {
     setIsOneOff(false);
   }
 
+  // function to clear 'pinned' activities
+  function clearPinnedActivities() {
+    setPinnedActivities([]); // sets an empty array
+  }
+
+  // Function to toggle activity pinned
+  const togglePin = (activityId) => {
+    setPinnedActivities((prevPinned) =>
+      prevPinned.includes(activityId)
+        ? prevPinned.filter((id) => id !== activityId) // Unpin if already pinned
+        : [...prevPinned, activityId] // Add to pinned if not already
+    );
+  };
+
   // load in the activities from the googlesheet using fetchActivities (in data.js)
   useEffect(() => {
     async function loadActivities() {
       const data = await fetchActivities();
-      setActivities(data);
+      // Assign an id to each activity based on its index
+      const dataWithIds = data.map((activity, index) => ({
+        ...activity,
+        id: index, // Assign the index as the unique id
+      }));
+      setActivities(dataWithIds);
     }
     loadActivities();
   }, []);
 
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const audiences = ['Children', 'Adults', 'Family', 'Everyone'];
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', 'No Set Day'];
+  const audiences = ['Children', 'Adults', 'Families', 'Everyone'];
   const costs = ['Free', 'Low Cost', 'Other'];
 
+  // Filter for displaying only pinned activities
+  const pinnedActivitiesData = activities.filter((activity) =>
+    pinnedActivities.includes(activity.id)
+  );
+
+  // Applying all search filters to get a set of activities
   const filteredActivities = activities.filter(activity => {
     // Split the search term into tokens by spaces and filter out any empty strings
     const searchTokens = searchTerm.toLowerCase().split(' ').filter(token => token);
@@ -190,7 +231,7 @@ function EnhancedServiceDirectory() {
         </label>
       </div>
 
-      <div className="filter-section">
+      <div className="filter-section-days">
         <h3>Days</h3>
         {daysOfWeek.map(day => (
           <button
@@ -250,10 +291,39 @@ function EnhancedServiceDirectory() {
         >
           List
         </button>
+        <button
+          onClick={() => setActiveTab('pinned')}
+          className={`tab-button tab-yellow ${activeTab === 'pinned' ? 'active' : ''}`}
+          title="See your pinned activities" // This will show on hover
+
+        >
+          Pinned
+        </button>
+
       </div>
 
       {/* Content Based on Active Tab */}
       <div className="activities">
+
+        {activeTab === 'pinned' && (
+          <div className="pinned-view tab-content-yellow">
+            <div className='pinned-view-button-box'>
+              <button className='clear-pins-button' onClick={clearPinnedActivities}>Clear Pins</button>
+            </div>
+            {pinnedActivitiesData.length > 0 ? (
+              pinnedActivitiesData.map((activity) => (
+                <ActivityCard
+                  key={activity.id}
+                  activity={activity}
+                  togglePin={togglePin}
+                  pinnedActivities={pinnedActivities}
+                />
+              ))
+            ) : (
+              <p>No pinned activities!</p>
+            )}
+          </div>
+        )}
 
         {activeTab === 'list' && (
           <div className="list-view tab-content-purple">
@@ -301,34 +371,50 @@ function EnhancedServiceDirectory() {
 
         {activeTab === 'cards' && (
           <div className="cards-view tab-content-green">
-            {filteredActivities.map((activity, index) => (
-              <ActivityCard key={index} activity={activity} />
-            ))}
+            {filteredActivities.length > 0 ? (
+              filteredActivities.map((activity, index) => (
+              <ActivityCard
+                key={index}
+                activity={activity}
+                togglePin={togglePin}
+                pinnedActivities={pinnedActivities}
+              />
+              ))
+            ) : (
+              <p>No activities match filter search!</p>
+            )}
           </div>
         )}  
 
         {activeTab === 'days' && (
           <div className="day-view tab-content-blue">
             {(filterDays.length > 0 ? filterDays : daysOfWeek).map(day => {
-              // Filter activities for the selected day
               const dayActivities = filteredActivities.filter(activity =>
                 activity.daysOfWeek.includes(day)
               );
             
-              // Render only if there are activities for the specific day
               return dayActivities.length > 0 ? (
                 <div key={day} className="day-section">
                   <h3 className="week-day-title">{day}</h3>
-                  <div className="activities-row">
+                  <div className="cards-view">
                     {dayActivities.map((activity, index) => (
-                      <div key={index} className="activity-card-wrapper">
-                        <ActivityCard activity={activity} />
-                      </div>
+                      <ActivityCard
+                        key={index}
+                        activity={activity}
+                        togglePin={togglePin}
+                        pinnedActivities={pinnedActivities}
+                      />
                     ))}
                   </div>
+                  <hr className="day-view-hr" />
                 </div>
               ) : null;
             })}
+
+            {/* Fallback message if no activities match */}
+            {filteredActivities.length === 0 && (
+              <p>No activities match filter search!</p>
+            )}
           </div>
         )}
 

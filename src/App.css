@@ -1,16 +1,21 @@
 /* Define variables */
 :root {
-  --tile-panel-colour: #cce5ff;
-  --tile-panel-border-colour: #005fc5;
-  --tile-panel-active-colour: #007bff;
+  --tile-panel-colour: #2d8ff7;
 
-  --list-panel-colour: #d4edda;
-  --list-panel-border-colour: #1c7531;
-  --list-panel-active-colour: #28a745;
+  --tile-panel-border-colour: #0050a7;
+  --tile-panel-active-colour: rgb(149, 216, 255);
 
-  --week-panel-colour: #e8daef;
-  --week-panel-border-colour: #502e8f;
-  --week-panel-active-colour: #845cce;
+  --list-panel-colour: #29b130;
+  --list-panel-border-colour: #1ea53d;
+  --list-panel-active-colour: #70e676;
+  
+  --week-panel-colour: #8966c9;
+  --week-panel-border-colour: #6441a5;
+  --week-panel-active-colour: #c297d8;
+  
+  --pinned-panel-colour: rgb(241, 145, 0);
+  --pinned-panel-border-colour: rgb(196, 127, 25);
+  --pinned-panel-active-colour: rgb(255, 186, 83);
 }
 
 .container {
@@ -30,7 +35,7 @@ body, html {
 }
 
 h1 {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: bold;
   margin-bottom: 20px;
 }
@@ -41,39 +46,55 @@ h1 {
 
 /* General card styling */
 .card {
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  padding: 8px;
   border: 1px solid #ddd;
-  padding: 16px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #fff;
-  margin-bottom: 5px;
+  width: 360; /* Fixed width for uniform sizing */
 }
 
-/* .cards-view as the primary grid container */
+/* .cards-view as the primary card container */
 .cards-view {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(370px, 370px));
-  gap: 16px;
-  margin-top: 0px;
-  justify-content: center; /* Centers the cards within the container */
+  grid-template-columns: repeat(auto-fill, minmax(360px, 360px));
+  gap: 30px; 
+  justify-content: center;
+  padding: 10px;
 }
 
+.day-section {
+  margin-bottom: 50px; /* Adds space between day sections */
+}
 
-@media (max-width: 830px) {
-  .cards-view {
-    display: grid; /* Ensure grid display on smaller screens */
-    grid-template-columns: 1fr; /* Make cards full-width on small screens */
-  }
-
-  .container {
-    padding: 0 10px; /* changes padding for smaller screens */
-  }
+.card-title-and-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Pushes title left and checkbox right */
+  margin-bottom: 10px;
 }
 
 .card-title {
   font-size: 20px;
   font-weight: bold;
-  margin: 0 0 5px 0;
+  margin: 0;
+  flex-grow: 1; /* Title takes up available space */
+  text-align: center;
+}
+
+.pin-checkbox {
+  display: flex;
+  align-items: flex-start; /* Aligns content within checkbox to the top */
+  align-self: flex-start; /* Aligns the checkbox to the top of the container */
+}
+
+.pin-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #007bff; /* Customize checkbox color */
+  cursor: pointer;
 }
 
 .card-description {
@@ -147,13 +168,38 @@ h1 {
   height: 16px;
 }
 
+@media (max-width: 860px) {
+  .cards-view {
+    grid-template-columns: 1.0fr; /* Single column for full-width stacking */
+  }
+
+  .card {
+    width: 100%; /* Make cards take full width of container */
+  }
+
+  .container {
+    padding: 0 10px; /* changes padding for smaller screens */
+  }
+}
+
 /* Filter button styles */
 .filter-section {
   margin-bottom: 10px;
 }
 
+.filter-section-days {
+  margin-bottom: 10px;
+}
+
+.filter-section-days button:last-child {
+  display: block; /* Forces the last button onto a new line */
+  width: 110px; /* Optional: makes the button span the entire width */
+  margin-top: 10px; /* Adds space above the last button */
+}
+
 .filter-section > h3{
   margin: 20px 0 8px 0;
+  font-size: larger;
 }
 
 .search-bar {
@@ -173,18 +219,17 @@ h1 {
 }
 
 .clear-search-button {
-  padding: 8px 12px;
+  padding: 8px 8px;
   width: 110px; /* Fixed width */
   min-width: 110px;
   margin-left: 10px;
-  border: 1px solid #b87d00;
+  border: 2px solid rgb(255, 124, 124);
   border-radius: 5px;
-  background-color: #ffb672;
+  background-color: rgb(255, 190, 190);
   cursor: pointer;
   font-size: 14px;
   text-align: center;
 }
-
 
 .filter-button {
   padding: 8px 12px;
@@ -208,13 +253,15 @@ h1 {
 }
 
 .tab-button {
-  padding: 8px 12px;
+  padding: 8px 0px;
   margin: 0px 0px 0 0px;
   border: 1px solid #ccc;
   border-radius: 5px 5px 0 0; 
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s ease;
+  color: rgb(255, 255, 255);
+  width: 60px;
 }
 
 /* Tab colors for filing cabinet effect */
@@ -233,6 +280,11 @@ h1 {
   border-color: var(--week-panel-border-colour);
 }
 
+.tab-button.tab-yellow {
+  background-color: var(--pinned-panel-colour);
+  border-color: var(--pinned-panel-border-colour);
+}
+
 /* Hover effects */
 .tab-button:hover {
   filter: brightness(0.95);
@@ -241,20 +293,26 @@ h1 {
 /* Active state for selected tab */
 .tab-button.active.tab-blue {
   background-color: var(--tile-panel-active-colour);
-  color: #fff;
+  color: #000000;
   border-color: var(--tile-panel-active-colour);
 }
 
 .tab-button.active.tab-green {
   background-color: var(--list-panel-active-colour);
-  color: #fff;
+  color: #000000;
   border-color: var(--list-panel-active-colour);
 }
 
 .tab-button.active.tab-purple {
   background-color: var(--week-panel-active-colour);
-  color: #fff;
+  color: #000000;
   border-color: var(--week-panel-active-colour);
+}
+
+.tab-button.active.tab-yellow {
+  background-color: var(--pinned-panel-active-colour);
+  color: #000000;
+  border-color: var(--pinned-panel-active-colour);
 }
 
 /* Matching content backgrounds based on active tab */
@@ -268,6 +326,7 @@ h1 {
   background-color: var(--list-panel-active-colour);
   padding: 16px;
   border-radius: 8px;
+  padding-top: 40px;
 }
 
 .tab-content-purple {
@@ -276,13 +335,55 @@ h1 {
   border-radius: 8px;
 }
 
+.tab-content-yellow {
+  background-color: var(--pinned-panel-active-colour);
+  padding: 16px;
+  border-radius: 8px;
+}
+
 .event-view-title {
   display: inline;
   margin: 0 10px 0 20px;
+  font-size: large;
 }
 
 .week-day-title {
-  color: white;
+  margin: 20px 0 10px 30px;
+  font-size: x-large;
+  color: #0c5aad;
+}
+
+.day-view-hr {
+  border: 3px solid #0c5aad ;
+  width: 80%;
+  margin-top: 20px;
+}
+
+/* Pinned View Styling*/
+.pinned-view .card {
+  display: block;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.pinned-view-button-box {
+  display: flex;
+  justify-content: flex-end; /* Aligns items to the right */
+  align-items: center; /* Centers items vertically if needed */
+  margin-bottom: 20px;
+}
+
+.clear-pins-button {
+  padding: 8px 8px;
+  width: 90px; /* Fixed width */
+  min-width: 90px;
+  margin-left: 10px;
+  border: 2px solid rgb(255, 124, 124);
+  border-radius: 5px;
+  background-color: rgb(255, 190, 190);
+  cursor: pointer;
+  font-size: 14px;
+  text-align: center;
 }
 
 /* Table styling */
@@ -320,25 +421,4 @@ h1 {
 /* Optional: make the table responsive */
 .list-view {
   overflow-x: auto;
-}
-
-.day-section {
-  margin-bottom: 20px; /* Space between day sections */
-}
-
-.week-day-title {
-  font-size: 1.5em;
-  margin: 0px 0 10px 0;
-}
-
-.activities-row {
-  display: flex;
-  flex-wrap: wrap; /* Allows wrapping to the next line if there's not enough space */
-  gap: 15px; /* Space between cards */
-  justify-content: center; /* Centers the cards in the middle of the row */
-
-}
-
-.activity-card-wrapper {
-  max-width: 370px; /* Optional max width to control card sizing */
 }

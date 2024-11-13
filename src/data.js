@@ -14,6 +14,7 @@ export async function fetchActivities() {
     // Define arrays for weekdays and the full week
     const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     const allDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const other = ["No Set Day"];
 
 
     const weekdaySpreadSheetRow = 16;
@@ -27,6 +28,8 @@ export async function fetchActivities() {
               daysOfWeek = weekdays;
             } else if (row[weekdaySpreadSheetRow] === "All Week") {
               daysOfWeek = allDays;
+            } else if (row[weekdaySpreadSheetRow] === "Other") {
+              daysOfWeek = other;
             } else {
               daysOfWeek = row[weekdaySpreadSheetRow] ? row[weekdaySpreadSheetRow].split(',').map(day => day.trim()) : [];
             }
