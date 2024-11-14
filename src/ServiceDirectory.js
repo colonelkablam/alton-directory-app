@@ -14,12 +14,19 @@ function ServiceDirectory() {
   const [filterAudience, setFilterAudience] = useState([]);
   const [filterCost, setFilterCost] = useState([]);
   const [filterDays, setFilterDays] = useState([]);
+  const [maxDistance, setMaxDistance] = useState(5); // Default to 10 km
+  const [tempMaxDistance, setTempMaxDistance] = useState(5); // Temporary distance for slider live update
   const [isOneOff, setIsOneOff] = useState(false); // State for the one-off checkbox
   
+  // Define the new filteredActivities state
+  const [filteredActivities, setFilteredActivities] = useState([]);
+
   // Store pinned activity IDs
   const [pinnedActivities, setPinnedActivities] = useState([]);
+
    // state for active tab view
   const [activeTab, setActiveTab] = useState('days');
+
    // initialise activities array
   const [activities, setActivities] = useState([]);
   
@@ -41,15 +48,19 @@ function ServiceDirectory() {
   // Apply filter to get only pinned activities
   const pinnedActivitiesData = activities.filter(activity => pinnedActivities.includes(activity.id));
   
-  // Apply filters to activities
-  const filteredActivities = applyFilters({
-    activities,
-    searchTerm,
-    filterAudience,
-    filterCost,
-    filterDays,
-    isOneOff,
-  });
+  // Apply filters only when a filter changes
+  useEffect(() => {
+    const newFilteredActivities = applyFilters({
+      activities,
+      searchTerm,
+      filterAudience,
+      filterCost,
+      filterDays,
+      isOneOff,
+      maxDistance: maxDistance * 1000, // Convert to meters
+    });
+    setFilteredActivities(newFilteredActivities);
+  }, [maxDistance, activities, searchTerm, filterAudience, filterCost, filterDays, isOneOff]);
 
   // needed to update the distance within the activity object  - passed as prop to each activity card
   function updateActivityDistance(activityId, newDistance) {
@@ -96,6 +107,21 @@ function ServiceDirectory() {
       </div>
 
       {/* Filter Section */}
+
+      {/* Distance Slider */}
+      <div className="filter-section">
+        <h3>Max Distance (km)</h3>
+        <input
+          type="range"
+          min="0"
+          max="50"
+          value={tempMaxDistance}
+          onChange={(e) => setTempMaxDistance(Number(e.target.value))} // Update temp on change
+          onMouseUp={() => setMaxDistance(tempMaxDistance)} // Set final distance on mouse release
+          onTouchEnd={() => setMaxDistance(tempMaxDistance)} // Handle touch devices
+        />
+      <span>{tempMaxDistance} km</span> {/* Display live distance */}
+      </div>
       
       {/* Days */}
       <div className="filter-section-days">

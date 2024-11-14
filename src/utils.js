@@ -45,7 +45,15 @@ export function getCostType(cost) {
 }
 
 // Main filtering function
-export function applyFilters({ activities, searchTerm, filterAudience, filterCost, filterDays, isOneOff }) {
+export function applyFilters({ 
+  activities, 
+  searchTerm, 
+  filterAudience, 
+  filterCost, 
+  filterDays, 
+  isOneOff, 
+  maxDistance 
+}) {
   const searchTokens = searchTerm.toLowerCase().split(' ').filter(Boolean);
 
   return activities.filter(activity => {
@@ -63,8 +71,11 @@ export function applyFilters({ activities, searchTerm, filterAudience, filterCos
     const matchesOneOff = isOneOff
       ? activity.timePeriod === 'One-off Event' || activity.timePeriod === 'Other (non-repeating)'
       : true;
+    // Ensure distance filter works correctly even if activity.distance is undefined
+    const matchesDistance = activity.distance == null || activity.distance <= maxDistance;
 
-    return matchesSearch && matchesAudience && matchesCost && matchesDay && matchesOneOff;
+
+    return matchesSearch && matchesAudience && matchesCost && matchesDay && matchesOneOff && matchesDistance;
   });
 }
   

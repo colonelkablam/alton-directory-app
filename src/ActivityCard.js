@@ -15,39 +15,37 @@ function ActivityCard({ activity, togglePin, pinnedActivities, updateActivityDis
     ? `${activity.oneOffDate} (${activity.timePeriod})`
     : activity.timePeriod;
 
-  // Fetch user location and calculate distance to the activity if it has latitude/longitude
-  useEffect(() => {
-    if (activity.lat && activity.long) {
-      getUserLocation()
-        .then(userLocation => {
-          const dist = calculateDistance(
-            userLocation.lat,
-            userLocation.long,
-            activity.lat,
-            activity.long
-          );
-
-          setDistance(dist); // Set the calculated distance
-
-          // Update parent with calculated distance
-          if (updateActivityDistance) {
-            updateActivityDistance(activity.id, dist);
-          }
-
-          //Uncomment if needed for debugging
-          // console.log("User location:", userLocation);
-          // console.log("Activity location:", activity.locationLat, activity.locationLong);
-          // console.log("Calculated distance:", dist);
-
-        })
-        .catch(error => {
-          console.error("Error getting user location:", error);
-          setDistance(null); // Set distance to null if there's an error in fetching location
-        });
-    } else {
-      setDistance(null); // Set distance to null if latitude or longitude is missing
-    }
-  }, [activity.id, activity.lat, activity.long, updateActivityDistance]);
+    useEffect(() => {
+      if (activity.lat && activity.long) {
+        getUserLocation()
+          .then(userLocation => {
+            const dist = calculateDistance(
+              userLocation.lat,
+              userLocation.long,
+              activity.lat,
+              activity.long
+            );
+    
+            // console.log("User location:", userLocation);
+            // console.log("Activity location:", { lat: activity.lat, long: activity.long });
+            // console.log("Calculated distance:", dist);
+    
+            setDistance(dist); // Set the calculated distance
+    
+            // Update parent with calculated distance
+            if (updateActivityDistance) {
+              updateActivityDistance(activity.id, dist);
+            }
+          })
+          .catch(error => {
+            console.error("Error getting user location:", error);
+            setDistance(null); // Set distance to null if there's an error in fetching location
+          });
+      } else {
+        setDistance(null); // Set distance to null if latitude or longitude is missing
+      }
+    }, [activity.id, activity.lat, activity.long, updateActivityDistance]);
+    
 
   return (
     <div className="card">
