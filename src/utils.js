@@ -1,6 +1,4 @@
 // utils.js
-import { calculateDistance } from './navUtils';
-
 
 // Toggle a filter on or off
 export function toggleFilter(array = [], value) {
@@ -94,11 +92,9 @@ export function applyFilters({
 
     // Distance matching: skip if maxDistance is set to 10,000 meters (10 km)
     // Calculate distance only if maxDistance is set and userLocation is available
-    const matchesDistance = maxDistance === 10000 || // Skip distance filter if maxDistance is "unlimited"
-      (userLocation &&
-       activity.latitude &&
-       activity.longitude &&
-       calculateDistance(userLocation.lat, userLocation.long, activity.latitude, activity.longitude) <= maxDistance);
+    const matchesDistance = maxDistance === 10000 || activity.distance <= maxDistance;
+
+       console.log(activity.distance, maxDistance, activity.distance <= maxDistance);
 
     return matchesSearch && matchesAudience && matchesCost && matchesDay && matchesOneOff && matchesDistance;
   });

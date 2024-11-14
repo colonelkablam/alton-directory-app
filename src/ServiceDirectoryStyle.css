@@ -34,6 +34,11 @@ body, html {
   font-family: Helvetica, Arial, sans-serif;
 }
 
+body {
+  overflow: scroll;
+
+}
+
 h1 {
   font-size: 26px;
   font-weight: bold;
@@ -259,13 +264,13 @@ h1 {
 }
 
 .postcode-input {
-  width: 95%;
-  max-width: 100px; /* Adjusted to leave space for the button */
+  padding: 0px 8px;
+  width: 90; /* Fixed width */
+  max-width: 90px;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-left: 5px;
-
 }
 
 .filter-button {

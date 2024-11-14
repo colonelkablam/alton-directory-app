@@ -3,7 +3,7 @@ import debounce from 'lodash.debounce';
 import './ServiceDirectoryStyle.css';
 import { fetchActivities } from './data.js';
 import { toggleFilter, resetFilters, togglePin, applyFilters, clearPinnedActivities} from './utils.js';
-import { DAYS_OF_WEEK, AUDIENCES, COSTS, UK_POSTCODE_REGEX } from './constants.js';
+import { DAYS_OF_WEEK, AUDIENCES, COSTS, UK_POSTCODE_REGEX, MAX_DISTANCE} from './constants.js';
 import { getUserLocation, fetchCoordinatesFromPostcode } from './navUtils.js';
 import ActivityCard from './ActivityCard';
 
@@ -30,9 +30,11 @@ function ServiceDirectory() {
   const [activities, setActivities] = useState([]);
   // user location
   const [userLocation, setUserLocation] = useState(null);
+  // keep track of if postcode valid
+  const [postcodeIsValid, setPostcodeIsValid] = useState(null);
 
 
-  // load in the activities from the googlesheet using fetchActivities (in data.js)
+  // load in the activity data from the googlesheet using fetchActivities (in data.js)
   useEffect(() => {
     async function loadActivities() {
       const data = await fetchActivities();
@@ -41,16 +43,16 @@ function ServiceDirectory() {
     loadActivities();
   }, []);
 
-    // Fetch browser location on component mount
-    useEffect(() => {
-      async function fetchLocation() {
-        const location = await getUserLocation();
-        if (location) {
-          setUserLocation(location);
-        }
+  // Fetch browser location on component mount
+  useEffect(() => {
+    async function fetchLocation() {
+      const location = await getUserLocation();
+      if (location) {
+        setUserLocation(location);
       }
-      fetchLocation();
-    }, []);
+    }
+    fetchLocation();
+  }, []);
 
   // to reduce calls to update when setting filter options
   const debouncedSearchTerm = useMemo(
@@ -59,7 +61,7 @@ function ServiceDirectory() {
         ...prev,
         searchTerm: term
       }));
-    }, 300),
+    }, 200),
     []
   );
 
@@ -73,20 +75,29 @@ function ServiceDirectory() {
     togglePin(activityId, pinnedActivities, setPinnedActivities);
   };
 
-  // Handle postcode input change
   const handlePostcodeChange = async (e) => {
-    const postcode = e.target.value.toUpperCase(); // Convert input to uppercase
+    const postcode = e.target.value.toUpperCase();
   
     setFilterOptions(prev => ({
       ...prev,
       postcode
     }));
-
-    // If the postcode is valid, fetch coordinates from postcode.io
-    if (UK_POSTCODE_REGEX.test(postcode)) {
+  
+    if (postcode === '') {
+      // Reset postcode validity and location if input is cleared
+      setPostcodeIsValid(null);
+    } else if (UK_POSTCODE_REGEX.test(postcode)) {
+      setPostcodeIsValid(true); // Set to valid
       const coords = await fetchCoordinatesFromPostcode(postcode);
       if (coords) {
-        setUserLocation(coords); // Update user location based on postcode
+        setUserLocation(coords);
+      }
+    } else {
+      // If postcode is invalid, reset to browser-based location
+      setPostcodeIsValid(false);
+      const browserLocation = await getUserLocation();
+      if (browserLocation) {
+        setUserLocation(browserLocation);
       }
     }
   };
@@ -158,8 +169,10 @@ function ServiceDirectory() {
       {/* Distance Slider */}
       <div className="distance-slider-bar">
         <h3>Max Distance</h3>
-        <span className='dist-slider-value'>{filterOptions.maxDistance / 1000} km</span>
-
+        {/* Display the distance value, showing ∞ when slider is at maximum */}
+        <span className='dist-slider-value'>
+          {filterOptions.maxDistance === MAX_DISTANCE ? '∞' : `${filterOptions.maxDistance / 1000} km`}
+        </span>
         <input
           type="range"
           min="0"
@@ -178,6 +191,9 @@ function ServiceDirectory() {
           title='Enter postcode for more accurate distances!'
           value={filterOptions.postcode}
           onChange={handlePostcodeChange}
+          style={{
+            backgroundColor: postcodeIsValid === null ? 'inherit' : postcodeIsValid ? 'lightgreen' : 'orange'
+          }} // Conditional styling
         />
       </div>
       

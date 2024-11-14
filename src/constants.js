@@ -4,6 +4,8 @@ export const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Frid
 export const AUDIENCES = ['Children', 'Adults', 'Families', 'Everyone'];
 export const COSTS = ['Free', 'Low Cost', 'Other'];
 
+export const MAX_DISTANCE = 10000; // 10 km in meters
+
 // Regular expression to match UK postcodes
 export const UK_POSTCODE_REGEX = /\b([A-Z]{1,2}\d{1,2}[A-Z]?\s*\d[A-Z]{2})\b/i;
 
