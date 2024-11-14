@@ -1,4 +1,5 @@
 // navUtils.js
+import { LONDON_LATITUDE_REGEX, LONDON_LONGITUDE_REGEX } from './constants.js';
 
 // Function to get the user's current location
 export function getUserLocation() {
@@ -40,4 +41,11 @@ export function calculateDistance(lat1, lon1, lat2, lon2) {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     return R * c; // Distance in meters
+}
+
+export function isValidLondonCoordinate(lat, long) {
+    const isValidLatitude = LONDON_LATITUDE_REGEX.test(lat);
+    const isValidLongditude = LONDON_LONGITUDE_REGEX.test(long);
+    
+    return isValidLatitude && isValidLongditude;
 }

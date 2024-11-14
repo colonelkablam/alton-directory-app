@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './ServiceDirectoryStyle.css';
 import { fetchActivities } from './data.js';
 import { toggleFilter, resetFilters, togglePin, applyFilters, clearPinnedActivities} from './utils.js';
-import { daysOfWeek, audiences, costs } from './constants.js';
+import { DAYS_OF_WEEK, ADUDIENCES, COSTS } from './constants.js';
 import ActivityCard from './ActivityCard'; // Assuming ActivityCard is in its own file now
 
 
@@ -23,7 +23,7 @@ function ServiceDirectory() {
    // initialise activities array
   const [activities, setActivities] = useState([]);
   
-  // Function to toggle if activity pinned
+  // Function to toggle if activity pinned - passed as prop to each activity card 
   // Use `togglePin` from utils.js
   const handleTogglePin = (activityId) => {
     togglePin(activityId, pinnedActivities, setPinnedActivities);
@@ -33,18 +33,15 @@ function ServiceDirectory() {
   useEffect(() => {
     async function loadActivities() {
       const data = await fetchActivities();
-      // Assign an id to each activity based on its index
-      const dataWithIds = data.map((activity, index) => ({
-        ...activity,
-        id: index, // Assign the index as the unique id
-      }));
-      setActivities(dataWithIds);
+      setActivities(data);
     }
     loadActivities();
   }, []);
   
-  // Apply filters and get only pinned activities
+  // Apply filter to get only pinned activities
   const pinnedActivitiesData = activities.filter(activity => pinnedActivities.includes(activity.id));
+  
+  // Apply filters to activities
   const filteredActivities = applyFilters({
     activities,
     searchTerm,
@@ -53,6 +50,15 @@ function ServiceDirectory() {
     filterDays,
     isOneOff,
   });
+
+  // needed to update the distance within the activity object  - passed as prop to each activity card
+  function updateActivityDistance(activityId, newDistance) {
+    setActivities(prevActivities => 
+      prevActivities.map(activity => 
+        activity.id === activityId ? { ...activity, distance: newDistance } : activity
+      )
+    );
+  }
   
   return (
     <div className="container">
@@ -94,7 +100,7 @@ function ServiceDirectory() {
       {/* Days */}
       <div className="filter-section-days">
         <h3>Days</h3>
-        {daysOfWeek.map(day => (
+        {DAYS_OF_WEEK.map(day => (
           <button
             key={day}
             className={filterDays.includes(day) ? 'filter-button active' : 'filter-button'}
@@ -108,7 +114,7 @@ function ServiceDirectory() {
       {/* Audience */}
       <div className="filter-section">
         <h3>Audience</h3>
-        {audiences.map(audience => (
+        {ADUDIENCES.map(audience => (
           <button
             key={audience}
             className={filterAudience.includes(audience) ? 'filter-button active' : 'filter-button'}
@@ -122,7 +128,7 @@ function ServiceDirectory() {
       {/* Cost */}
       <div className="filter-section">
         <h3>Cost</h3>
-        {costs.map(cost => (
+        {COSTS.map(cost => (
           <button
             key={cost}
             className={filterCost.includes(cost) ? 'filter-button active' : 'filter-button'}
@@ -179,6 +185,7 @@ function ServiceDirectory() {
                   activity={activity}
                   togglePin={handleTogglePin}
                   pinnedActivities={pinnedActivities}
+                  updateActivityDistance={updateActivityDistance}
                 />
               ))
             ) : (
@@ -206,15 +213,15 @@ function ServiceDirectory() {
                 </tr>
               </thead>
               <tbody>
-                {filteredActivities.map((activity, index) => (
-                  <tr key={index}>
+                {filteredActivities.map((activity, day) => (
+                  <tr key={day}>
                     <td>{activity.name}</td>
                     <td>{activity.description}</td>
                     <td>{activity.audience}</td>
                     <td>{activity.venue}</td>
                     <td>
-                      {activity.daysOfWeek.map((day, idx) => (
-                        <React.Fragment key={idx}>
+                      {activity.daysOfWeek.map((day) => (
+                        <React.Fragment key={day}>
                           {day}
                           <br />
                         </React.Fragment>
@@ -236,13 +243,14 @@ function ServiceDirectory() {
         {activeTab === 'cards' && (
           <div className="cards-view tab-content-green">
             {filteredActivities.length > 0 ? (
-              filteredActivities.map((activity, index) => (
-              <ActivityCard
-                key={index}
-                activity={activity}
-                togglePin={handleTogglePin}
-                pinnedActivities={pinnedActivities}
-              />
+              filteredActivities.map((activity) => (
+                <ActivityCard
+                  key={activity.id} // Use activity.id
+                  activity={activity}
+                  togglePin={handleTogglePin}
+                  pinnedActivities={pinnedActivities}
+                  updateActivityDistance={updateActivityDistance}
+                />
               ))
             ) : (
               <p>No activities match filter search!</p>
@@ -253,7 +261,7 @@ function ServiceDirectory() {
         {/* Day View Tab Open */}
         {activeTab === 'days' && (
           <div className="day-view tab-content-blue">
-            {(filterDays.length > 0 ? filterDays : daysOfWeek).map(day => {
+            {(filterDays.length > 0 ? filterDays : DAYS_OF_WEEK).map(day => {
               const dayActivities = filteredActivities.filter(activity =>
                 activity.daysOfWeek.includes(day)
               );
@@ -262,12 +270,13 @@ function ServiceDirectory() {
                 <div key={day} className="day-section">
                   <h3 className="week-day-title">{day}</h3>
                   <div className="cards-view">
-                    {dayActivities.map((activity, index) => (
+                    {dayActivities.map((activity) => (
                       <ActivityCard
-                        key={index}
+                        key={activity.id} // Use activity.id
                         activity={activity}
                         togglePin={handleTogglePin}
                         pinnedActivities={pinnedActivities}
+                        updateActivityDistance={updateActivityDistance}
                       />
                     ))}
                   </div>

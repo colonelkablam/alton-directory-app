@@ -1,11 +1,12 @@
 // data.js
+import { UK_POSTCODE_REGEX } from './constants.js';
+import { isValidLondonCoordinate } from './navUtils.js';
+
 
 const API_KEY = 'AIzaSyBdKlI9mxJJfv5xsuVFAK7ncjbES2A1kaI'; // Replace with your actual API key
 const SHEET_ID = '1uUiZB1ArpX2KskYTXZ8sMphLWraAm4n_JQO57NXr6U0'; // Replace with your actual Sheet ID
 const SHEET_NAME = 'Directory';
 
-// Regular expression to match UK postcodes
-const postcodeRegex = /\b([A-Z]{1,2}\d{1,2}[A-Z]?\s*\d[A-Z]{2})\b/i;
 
 export async function fetchActivities() {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
@@ -21,19 +22,29 @@ export async function fetchActivities() {
     const weekdaySpreadSheetRow = 16;
 
     // start processing data from gsheet
+
+    //top two lines are not data
     const activitiesData = data.values.slice(2).filter(row => row[0]); // Remove empty rows
 
     // Step 1: Gather postcodes that need geolocation data and make new set with postcodes added as an element
     const activitiesWithPostcodes = await Promise.all(
-      activitiesData.map(async (row) => {
+      activitiesData.map(async (row, index) => {
         const venue = row[5] || "";
-        const postcodeMatch = venue.match(postcodeRegex);
+        const postcodeMatch = venue.match(UK_POSTCODE_REGEX);
         const postcode = postcodeMatch ? postcodeMatch[0].toUpperCase() : null;
 
         let lat = null;
         let long = null;
 
-        if (postcode) {
+        // it is assumed entered long lat will be more accurate than postcode value
+        // if long and lat IS valid use for values
+        if (isValidLondonCoordinate(row[6], row[7]))
+        {
+          lat = parseFloat(row[6]);
+          long = parseFloat(row[7]);
+
+          // otherwise try and use postcode if it exists to get approx long and lat
+        } else if (postcode) {
           try {
             const postcodeResponse = await fetch(`https://api.postcodes.io/postcodes/${postcode}`);
             const postcodeData = await postcodeResponse.json();
@@ -41,21 +52,18 @@ export async function fetchActivities() {
             if (postcodeData.status === 200 && postcodeData.result) {
               lat = postcodeData.result.latitude;
               long = postcodeData.result.longitude;
-
-              //console.log(lat, long);
             }
           } catch (error) {
             console.error("Error fetching postcode data:", error);
           }
         }
 
-        return { row, lat, long, postcode };
+        return { row, index, lat, long, postcode };
       })
     );
 
-
     // Step 2: Map the final activity data
-    const activities = activitiesWithPostcodes.map(({ row, lat, long, postcode }) => {
+    const activities = activitiesWithPostcodes.map(({ row, index, lat, long, postcode }) => {
       let daysOfWeek;
       const daysString = row[weekdaySpreadSheetRow] || '';
 
@@ -70,6 +78,7 @@ export async function fetchActivities() {
       }
 
       return {
+        id: index, // Generate a unique id for each activity - currently just using index as this has to be unique
         name: row[0],
         description: row[1],
         audience: row[2],
@@ -84,11 +93,15 @@ export async function fetchActivities() {
         cost: row[12],
         contact: row[13],
         fisLink: row[18],
-        locationLat: lat,
-        locationLong: long,
+        long,
+        lat,
         postcode,
+        distance: null
       };
     })
+
+    console.log(activities);
+
     return activities;
 
   } catch (error) {
