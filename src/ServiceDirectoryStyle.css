@@ -215,7 +215,7 @@ h1 {
   width: 95%;
   max-width: 740px; /* Adjusted to leave space for the button */
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 2px solid #cccccc;
   border-radius: 5px;
 }
 
@@ -230,6 +230,42 @@ h1 {
   cursor: pointer;
   font-size: 14px;
   text-align: center;
+}
+
+.distance-slider-bar {
+  display: flex;
+  justify-content: space-between; /* Space between input and button */
+  align-items: center;
+  max-width: 600px; /* Optional: Set a max-width to align with the input */
+  margin-bottom: 10px;
+}
+
+.distance-slider-bar > h3 {
+  font-size: medium;
+  text-align: center;
+  width: 210px;
+  padding: 0 5px;
+}
+
+.distance-slider-bar > input {
+  width: 100%;
+}
+
+.dist-slider-value {
+  width: 100px;
+  font-size: medium;
+  text-align: center;
+  padding: 0 5px 0 3px;
+}
+
+.postcode-input {
+  width: 95%;
+  max-width: 100px; /* Adjusted to leave space for the button */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-left: 5px;
+
 }
 
 .filter-button {

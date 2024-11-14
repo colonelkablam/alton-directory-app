@@ -100,7 +100,7 @@ export async function fetchActivities() {
       };
     })
 
-    console.log(activities);
+    //console.log(activities);
 
     return activities;
 

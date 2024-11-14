@@ -1,40 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import debounce from 'lodash.debounce';
 import './ServiceDirectoryStyle.css';
 import { fetchActivities } from './data.js';
 import { toggleFilter, resetFilters, togglePin, applyFilters, clearPinnedActivities} from './utils.js';
-import { DAYS_OF_WEEK, ADUDIENCES, COSTS } from './constants.js';
-import ActivityCard from './ActivityCard'; // Assuming ActivityCard is in its own file now
+import { DAYS_OF_WEEK, AUDIENCES, COSTS, UK_POSTCODE_REGEX } from './constants.js';
+import { getUserLocation, fetchCoordinatesFromPostcode } from './navUtils.js';
+import ActivityCard from './ActivityCard';
 
 
 // Main Component
 function ServiceDirectory() {
 
-  // define the states for my search and filtering
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterAudience, setFilterAudience] = useState([]);
-  const [filterCost, setFilterCost] = useState([]);
-  const [filterDays, setFilterDays] = useState([]);
-  const [maxDistance, setMaxDistance] = useState(5); // Default to 10 km
-  const [tempMaxDistance, setTempMaxDistance] = useState(5); // Temporary distance for slider live update
-  const [isOneOff, setIsOneOff] = useState(false); // State for the one-off checkbox
-  
-  // Define the new filteredActivities state
-  const [filteredActivities, setFilteredActivities] = useState([]);
+  // combined filter states
+  const [filterOptions, setFilterOptions] = useState({
+    audience: [],
+    cost: [],
+    days: [],
+    isOneOff: false,
+    maxDistance: 10 * 1000, // Default 10 km in meters
+    searchTerm: '',
+    postcode: ''
 
+  });  
   // Store pinned activity IDs
   const [pinnedActivities, setPinnedActivities] = useState([]);
-
    // state for active tab view
   const [activeTab, setActiveTab] = useState('days');
-
    // initialise activities array
   const [activities, setActivities] = useState([]);
-  
-  // Function to toggle if activity pinned - passed as prop to each activity card 
-  // Use `togglePin` from utils.js
-  const handleTogglePin = (activityId) => {
-    togglePin(activityId, pinnedActivities, setPinnedActivities);
-  };
+  // user location
+  const [userLocation, setUserLocation] = useState(null);
+
 
   // load in the activities from the googlesheet using fetchActivities (in data.js)
   useEffect(() => {
@@ -44,33 +40,83 @@ function ServiceDirectory() {
     }
     loadActivities();
   }, []);
+
+    // Fetch browser location on component mount
+    useEffect(() => {
+      async function fetchLocation() {
+        const location = await getUserLocation();
+        if (location) {
+          setUserLocation(location);
+        }
+      }
+      fetchLocation();
+    }, []);
+
+  // to reduce calls to update when setting filter options
+  const debouncedSearchTerm = useMemo(
+    () => debounce((term) => {
+      setFilterOptions(prev => ({
+        ...prev,
+        searchTerm: term
+      }));
+    }, 300),
+    []
+  );
+
+  const handleSearchChange = (e) => {
+    const term = e.target.value;
+    debouncedSearchTerm(term); // Debounced search directly updates filterOptions
+  };
+  
+  // Function to toggle if activity pinned - passed as prop to each activity card 
+  const handleTogglePin = (activityId) => {
+    togglePin(activityId, pinnedActivities, setPinnedActivities);
+  };
+
+  // Handle postcode input change
+  const handlePostcodeChange = async (e) => {
+    const postcode = e.target.value.toUpperCase(); // Convert input to uppercase
+  
+    setFilterOptions(prev => ({
+      ...prev,
+      postcode
+    }));
+
+    // If the postcode is valid, fetch coordinates from postcode.io
+    if (UK_POSTCODE_REGEX.test(postcode)) {
+      const coords = await fetchCoordinatesFromPostcode(postcode);
+      if (coords) {
+        setUserLocation(coords); // Update user location based on postcode
+      }
+    }
+  };
   
   // Apply filter to get only pinned activities
   const pinnedActivitiesData = activities.filter(activity => pinnedActivities.includes(activity.id));
   
   // Apply filters only when a filter changes
-  useEffect(() => {
-    const newFilteredActivities = applyFilters({
+  const filteredActivities = useMemo(() => {
+    return applyFilters({
       activities,
-      searchTerm,
-      filterAudience,
-      filterCost,
-      filterDays,
-      isOneOff,
-      maxDistance: maxDistance * 1000, // Convert to meters
+      searchTerm: filterOptions.searchTerm,
+      filterAudience: filterOptions.audience,
+      filterCost: filterOptions.cost,
+      filterDays: filterOptions.days,
+      isOneOff: filterOptions.isOneOff,
+      maxDistance: filterOptions.maxDistance,
+      userLocation
     });
-    setFilteredActivities(newFilteredActivities);
-  }, [maxDistance, activities, searchTerm, filterAudience, filterCost, filterDays, isOneOff]);
+  }, [activities, filterOptions, userLocation]);
 
-  // needed to update the distance within the activity object  - passed as prop to each activity card
-  function updateActivityDistance(activityId, newDistance) {
-    setActivities(prevActivities => 
-      prevActivities.map(activity => 
+  const updateActivityDistance = useCallback((activityId, newDistance) => {
+    setActivities((prevActivities) =>
+      prevActivities.map((activity) =>
         activity.id === activityId ? { ...activity, distance: newDistance } : activity
       )
     );
-  }
-  
+  }, []);
+
+
   return (
     <div className="container">
       <h1>Community Activities</h1>
@@ -81,14 +127,12 @@ function ServiceDirectory() {
           type="text"
           placeholder="Search activities..."
           className="search-input"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          value={filterOptions.searchTerm}
+          onChange={handleSearchChange} // Use handleSearchChange here
         />
         <button
           className="clear-search-button"
-          onClick={() => {
-            resetFilters(setSearchTerm, setFilterAudience, setFilterCost, setFilterDays, setIsOneOff);
-          }}
+          onClick={() => resetFilters(setFilterOptions)}
         >
           Clear Search
         </button>
@@ -96,11 +140,14 @@ function ServiceDirectory() {
 
       {/* One-Off Checkbox */}
       <div className="filter-section">
-        <label>
+      <label>
           <input
             type="checkbox"
-            checked={isOneOff}
-            onChange={(e) => setIsOneOff(e.target.checked)}
+            checked={filterOptions.isOneOff}
+            onChange={(e) => setFilterOptions((prev) => ({
+              ...prev,
+              isOneOff: e.target.checked
+            }))}
           />
           One-off or events that do not repeat every week or month
         </label>
@@ -109,18 +156,29 @@ function ServiceDirectory() {
       {/* Filter Section */}
 
       {/* Distance Slider */}
-      <div className="filter-section">
-        <h3>Max Distance (km)</h3>
+      <div className="distance-slider-bar">
+        <h3>Max Distance</h3>
+        <span className='dist-slider-value'>{filterOptions.maxDistance / 1000} km</span>
+
         <input
           type="range"
           min="0"
-          max="50"
-          value={tempMaxDistance}
-          onChange={(e) => setTempMaxDistance(Number(e.target.value))} // Update temp on change
-          onMouseUp={() => setMaxDistance(tempMaxDistance)} // Set final distance on mouse release
-          onTouchEnd={() => setMaxDistance(tempMaxDistance)} // Handle touch devices
+          max="10"
+          step="0.1"
+          value={filterOptions.maxDistance / 1000}
+          onChange={(e) => setFilterOptions((prev) => ({
+            ...prev,
+            maxDistance: Number(e.target.value) * 1000
+          }))}
         />
-      <span>{tempMaxDistance} km</span> {/* Display live distance */}
+        <input
+          type="text"
+          placeholder="Your postcode..."
+          className="postcode-input"
+          title='Enter postcode for more accurate distances!'
+          value={filterOptions.postcode}
+          onChange={handlePostcodeChange}
+        />
       </div>
       
       {/* Days */}
@@ -129,8 +187,13 @@ function ServiceDirectory() {
         {DAYS_OF_WEEK.map(day => (
           <button
             key={day}
-            className={filterDays.includes(day) ? 'filter-button active' : 'filter-button'}
-            onClick={() => toggleFilter(setFilterDays, day)}
+            className={filterOptions.days.includes(day) ? 'filter-button active' : 'filter-button'}
+            onClick={() => 
+              setFilterOptions(prev => ({
+                ...prev,
+                days: toggleFilter(prev.days, day)
+              }))
+            }
           >
             {day}
           </button>
@@ -140,11 +203,16 @@ function ServiceDirectory() {
       {/* Audience */}
       <div className="filter-section">
         <h3>Audience</h3>
-        {ADUDIENCES.map(audience => (
+        {AUDIENCES.map(audience => (
           <button
             key={audience}
-            className={filterAudience.includes(audience) ? 'filter-button active' : 'filter-button'}
-            onClick={() => toggleFilter(setFilterAudience, audience)}
+            className={filterOptions.audience.includes(audience) ? 'filter-button active' : 'filter-button'}
+            onClick={() => 
+              setFilterOptions(prevOptions => ({
+                ...prevOptions,
+                audience: toggleFilter(prevOptions.audience, audience)
+              }))
+            }
           >
             {audience}
           </button>
@@ -157,8 +225,13 @@ function ServiceDirectory() {
         {COSTS.map(cost => (
           <button
             key={cost}
-            className={filterCost.includes(cost) ? 'filter-button active' : 'filter-button'}
-            onClick={() => toggleFilter(setFilterCost, cost)}
+            className={filterOptions.cost.includes(cost) ? 'filter-button active' : 'filter-button'}
+            onClick={() => 
+              setFilterOptions(prev => ({
+                ...prev,
+                cost: toggleFilter(prev.cost, cost)
+              }))
+            }
           >
             {cost}
           </button>
@@ -212,12 +285,14 @@ function ServiceDirectory() {
                   togglePin={handleTogglePin}
                   pinnedActivities={pinnedActivities}
                   updateActivityDistance={updateActivityDistance}
+                  userLocation={userLocation}
+
                 />
               ))
             ) : (
               <p>No pinned activities!</p>
             )}
-            </div>
+          </div>
         )}
 
         {/* List View Tab Open */}
@@ -226,7 +301,7 @@ function ServiceDirectory() {
             <table className="list-table">
               <thead>
                 <tr>
-                  <th>Pin</th> {/* New column for the pin checkbox */}
+                  <th>Pin</th>
                   <th>Name</th>
                   <th>Description</th>
                   <th>Audience</th>
@@ -247,7 +322,7 @@ function ServiceDirectory() {
                         type="checkbox"
                         checked={pinnedActivities.includes(activity.id)}
                         onChange={() => handleTogglePin(activity.id)}
-                        title="Pin this activity" // Tooltip on hover
+                        title="Pin this activity"
                       />
                     </td>
                     <td>{activity.name}</td>
@@ -280,11 +355,12 @@ function ServiceDirectory() {
             {filteredActivities.length > 0 ? (
               filteredActivities.map((activity) => (
                 <ActivityCard
-                  key={activity.id} // Use activity.id
+                  key={activity.id}
                   activity={activity}
                   togglePin={handleTogglePin}
                   pinnedActivities={pinnedActivities}
                   updateActivityDistance={updateActivityDistance}
+                  userLocation={userLocation}
                 />
               ))
             ) : (
@@ -296,7 +372,7 @@ function ServiceDirectory() {
         {/* Day View Tab Open */}
         {activeTab === 'days' && (
           <div className="day-view tab-content-blue">
-            {(filterDays.length > 0 ? filterDays : DAYS_OF_WEEK).map(day => {
+            {(filterOptions.days.length > 0 ? filterOptions.days : DAYS_OF_WEEK).map(day => {
               const dayActivities = filteredActivities.filter(activity =>
                 activity.daysOfWeek.includes(day)
               );
@@ -307,11 +383,12 @@ function ServiceDirectory() {
                   <div className="cards-view">
                     {dayActivities.map((activity) => (
                       <ActivityCard
-                        key={activity.id} // Use activity.id
+                        key={activity.id}
                         activity={activity}
                         togglePin={handleTogglePin}
                         pinnedActivities={pinnedActivities}
                         updateActivityDistance={updateActivityDistance}
+                        userLocation={userLocation}
                       />
                     ))}
                   </div>
@@ -326,7 +403,7 @@ function ServiceDirectory() {
           </div>
         )}
 
-       </div>{/* End of content based on active tab */}
+      </div>{/* End of content based on active tab */}
     </div>
   );
 }

@@ -1,10 +1,10 @@
 // ActivityCard.js
 import React, { useState, useEffect } from 'react';
 import { MapPin, Clock, User, PoundSterling, Globe, Phone, Users, Footprints } from 'lucide-react';
-import { getUserLocation, calculateDistance } from './navUtils';
+import { calculateDistance } from './navUtils';
 
 
-function ActivityCard({ activity, togglePin, pinnedActivities, updateActivityDistance }) {
+function ActivityCard({ activity, togglePin, pinnedActivities, updateActivityDistance, userLocation }) {
   // Check if this activity is pinned
   const isPinned = pinnedActivities.includes(activity.id);
   // State to store the distance
@@ -16,35 +16,23 @@ function ActivityCard({ activity, togglePin, pinnedActivities, updateActivityDis
     : activity.timePeriod;
 
     useEffect(() => {
-      if (activity.lat && activity.long) {
-        getUserLocation()
-          .then(userLocation => {
-            const dist = calculateDistance(
-              userLocation.lat,
-              userLocation.long,
-              activity.lat,
-              activity.long
-            );
-    
-            // console.log("User location:", userLocation);
-            // console.log("Activity location:", { lat: activity.lat, long: activity.long });
-            // console.log("Calculated distance:", dist);
-    
-            setDistance(dist); // Set the calculated distance
-    
-            // Update parent with calculated distance
-            if (updateActivityDistance) {
-              updateActivityDistance(activity.id, dist);
-            }
-          })
-          .catch(error => {
-            console.error("Error getting user location:", error);
-            setDistance(null); // Set distance to null if there's an error in fetching location
-          });
+      if (activity.lat && activity.long && userLocation) {
+        const dist = calculateDistance(
+          userLocation.lat,
+          userLocation.long,
+          activity.lat,
+          activity.long
+        );
+  
+        setDistance(dist); // Set the calculated distance
+        
+        if (updateActivityDistance) {
+          updateActivityDistance(activity.id, dist); // Update parent with calculated distance
+        }
       } else {
-        setDistance(null); // Set distance to null if latitude or longitude is missing
+        setDistance(null); // Set distance to null if userLocation or activity coordinates are missing
       }
-    }, [activity.id, activity.lat, activity.long, updateActivityDistance]);
+    }, [activity.id, activity.lat, activity.long, userLocation, updateActivityDistance]);
     
 
   return (

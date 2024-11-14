@@ -1,7 +1,7 @@
 // constants.js
 
 export const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', 'No Set Day'];
-export const ADUDIENCES = ['Children', 'Adults', 'Families', 'Everyone'];
+export const AUDIENCES = ['Children', 'Adults', 'Families', 'Everyone'];
 export const COSTS = ['Free', 'Low Cost', 'Other'];
 
 // Regular expression to match UK postcodes
