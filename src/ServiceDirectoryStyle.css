@@ -333,7 +333,7 @@ h1 {
 .tab-content-purple {
   background-color: var(--week-panel-active-colour);
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 8px;  
 }
 
 .tab-content-yellow {
@@ -387,39 +387,49 @@ h1 {
   text-align: center;
 }
 
+/* Container styling */
+.list-view {
+  padding: 16px;
+  overflow-x: auto; /* Allows horizontal scroll if content overflows */
+}
+
 /* Table styling */
-.list-view table {
-  width: 100%;
+.list-table {
+  width: 100%; /* Takes up full width of the container */
   border-collapse: collapse;
-  margin-top: 16px;
   background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  table-layout: auto; /* Allows for flexible column widths */
 }
 
-.list-view th, .list-view td {
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
+.list-table th {
+  padding: 6px;
+  text-align: center;
   font-size: 14px;
+  border-bottom: 3px solid #ddd;}
+
+.list-table td {
+  padding: 6px;
+  text-align: left;
+  font-size: 12px;
+  border-bottom: 1px solid #ddd;
 }
 
-.list-view th {
+/* Header row styling */
+.list-table th {
   background-color: #f4f4f4;
   font-weight: bold;
   color: #333;
 }
 
-.list-view tbody tr:nth-child(even) {
+/* Alternating row color */
+.list-table tbody tr:nth-child(even) {
   background-color: #f9f9f9;
 }
 
-.list-view tbody tr:hover {
-  background-color: #f1f1f1;
+/* Row hover effect */
+.list-table tbody tr:hover {
+  background-color: #f4e3fa;
 }
 
-/* Optional: make the table responsive */
-.list-view {
-  overflow-x: auto;
-}
