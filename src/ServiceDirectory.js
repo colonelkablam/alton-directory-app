@@ -196,48 +196,57 @@ function ServiceDirectory() {
 
         {/* List View Tab Open */}
         {activeTab === 'list' && (
-  <div className="list-view tab-content-purple">
-    <table className="list-table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Audience</th>
-          <th>Venue</th>
-          <th>Day</th>
-          <th>Time</th>
-          <th>One Off Date</th>
-          <th>Cost</th>
-          <th>Organiser</th>
-          <th>Contact</th>
-        </tr>
-      </thead>
-      <tbody>
-        {filteredActivities.map((activity) => (
-          <tr key={activity.id}>
-            <td>{activity.name}</td>
-            <td>{activity.description}</td>
-            <td>{activity.audience}</td>
-            <td>{activity.venue}</td>
-            <td>
-              {activity.daysOfWeek.map((day) => (
-                <React.Fragment key={day}>
-                  {day}
-                  <br />
-                </React.Fragment>
-              ))}
-            </td>
-            <td>{activity.time}</td>
-            <td>{activity.oneOffDate || 'N/A'}</td>
-            <td>{activity.cost}</td>
-            <td>{activity.organiser}</td>
-            <td>{activity.contact || 'N/A'}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-)}
+          <div className="list-view tab-content-purple">
+            <table className="list-table">
+              <thead>
+                <tr>
+                  <th>Pin</th> {/* New column for the pin checkbox */}
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Audience</th>
+                  <th>Venue</th>
+                  <th>Day</th>
+                  <th>Time</th>
+                  <th>One-off Date</th>
+                  <th>Cost</th>
+                  <th>Organiser</th>
+                  <th>Contact</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredActivities.map((activity) => (
+                  <tr key={activity.id}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={pinnedActivities.includes(activity.id)}
+                        onChange={() => handleTogglePin(activity.id)}
+                        title="Pin this activity" // Tooltip on hover
+                      />
+                    </td>
+                    <td>{activity.name}</td>
+                    <td>{activity.description}</td>
+                    <td>{activity.audience}</td>
+                    <td>{activity.venue}</td>
+                    <td>
+                      {activity.daysOfWeek.map((day) => (
+                        <React.Fragment key={day}>
+                          {day}
+                          <br />
+                        </React.Fragment>
+                      ))}
+                    </td>
+                    <td>{activity.time}</td>
+                    <td>{activity.oneOffDate || 'N/A'}</td>
+                    <td>{activity.cost}</td>
+                    <td>{activity.organiser}</td>
+                    <td>{activity.contact || 'N/A'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
         
         {/* Card View Tab Open */}
         {activeTab === 'cards' && (

@@ -405,14 +405,15 @@ h1 {
 
 .list-table th {
   padding: 6px;
-  text-align: center;
-  font-size: 14px;
-  border-bottom: 3px solid #ddd;}
+  text-align: left;
+  padding-left: 10px;
+  font-size: 16px;
+  border-bottom: 2px solid #c9c7c7;}
 
 .list-table td {
   padding: 6px;
   text-align: left;
-  font-size: 12px;
+  font-size: 14px;
   border-bottom: 1px solid #ddd;
 }
 
@@ -425,7 +426,7 @@ h1 {
 
 /* Alternating row color */
 .list-table tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background-color: #ebebeb;
 }
 
 /* Row hover effect */
