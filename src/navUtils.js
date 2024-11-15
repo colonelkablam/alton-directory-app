@@ -51,24 +51,29 @@ export function isValidLondonCoordinate(lat, long) {
 }
 
 export async function fetchCoordinatesFromPostcode(postcode) {
-    const cleanedPostcode = postcode.replace(/\s/g, ''); // Remove any spaces
+    const cleanedPostcode = postcode.replace(/\s/g, ''); // Remove spaces
     const url = `https://api.postcodes.io/postcodes/${cleanedPostcode}`;
 
     try {
         const response = await fetch(url);
         const data = await response.json();
-        
+
         if (data.status === 200 && data.result) {
             return {
                 lat: data.result.latitude,
-                long: data.result.longitude
+                long: data.result.longitude,
             };
+        } else if (data.status === 404) {
+            console.warn(`Postcode not found: ${postcode}`);
         } else {
-            console.warn("Invalid postcode or postcode not found.");
-            return null;
+            console.error(`Unexpected API response: ${data}`);
         }
+
+        return null;
     } catch (error) {
-        console.error("Error fetching coordinates from postcode.io:", error);
+        console.error(`Error fetching coordinates for postcode ${postcode}:`, error);
         return null;
     }
 }
+
+

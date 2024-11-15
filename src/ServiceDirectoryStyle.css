@@ -58,7 +58,7 @@ h1 {
   border: 1px solid #ddd;
   border-radius: 8px;
   background-color: #fff;
-  width: 360; /* Fixed width for uniform sizing */
+  width: 360px; /* Fixed width for uniform sizing */
 }
 
 /* .cards-view as the primary card container */
@@ -67,7 +67,6 @@ h1 {
   grid-template-columns: repeat(auto-fill, minmax(360px, 360px));
   gap: 30px; 
   justify-content: center;
-  padding: 10px;
 }
 
 .day-section {
@@ -197,10 +196,19 @@ h1 {
   margin-bottom: 10px;
 }
 
+.filter-section-distance {
+  display: flex;
+}
+
 .filter-section-days button:last-child {
   display: block; /* Forces the last button onto a new line */
   width: 110px; /* Optional: makes the button span the entire width */
   margin-top: 10px; /* Adds space above the last button */
+}
+
+.one-off-label {
+  margin-bottom: 10px;
+  font-size: medium;
 }
 
 .filter-section > h3{
@@ -256,11 +264,11 @@ h1 {
   width: 100%;
 }
 
-.dist-slider-value {
+.distance-slider-value {
   width: 100px;
   font-size: medium;
-  text-align: center;
-  padding: 0 5px 0 3px;
+  text-align: left;
+  padding: 0 0px 0 5px;
 }
 
 .postcode-input {
@@ -271,6 +279,15 @@ h1 {
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-left: 5px;
+}
+
+.enable-dist-slider {
+  width: 20px !important;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .filter-button {
@@ -448,13 +465,13 @@ h1 {
   padding: 6px;
   text-align: left;
   padding-left: 10px;
-  font-size: 16px;
+  font-size: 15px;
   border-bottom: 2px solid #c9c7c7;}
 
 .list-table td {
   padding: 6px;
   text-align: left;
-  font-size: 14px;
+  font-size: 13px;
   border-bottom: 1px solid #ddd;
 }
 
@@ -473,5 +490,27 @@ h1 {
 /* Row hover effect */
 .list-table tbody tr:hover {
   background-color: #f4e3fa;
+}
+.footer {
+  margin-top: 2rem;
+  padding: 0.5rem;
+  background-color: #f4f4f4;
+  text-align: center;
+}
+
+.footer p {
+  margin: 0;
+  font-size: 1rem;
+  color: #555;
+}
+
+.footer-link {
+  margin-left: 5px;
+  text-decoration: none;
+  color: #007bff;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
 }
 

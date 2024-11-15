@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Infinity } from 'lucide-react';
 import debounce from 'lodash.debounce';
 import './ServiceDirectoryStyle.css';
 import { fetchActivities } from './data.js';
 import { toggleFilter, resetFilters, togglePin, applyFilters, clearPinnedActivities} from './utils.js';
 import { DAYS_OF_WEEK, AUDIENCES, COSTS, UK_POSTCODE_REGEX, MAX_DISTANCE} from './constants.js';
-import { getUserLocation, fetchCoordinatesFromPostcode } from './navUtils.js';
+import { getUserLocation, fetchCoordinatesFromPostcode, calculateDistance } from './navUtils.js';
 import ActivityCard from './ActivityCard';
+
 
 
 // Main Component
@@ -17,7 +19,7 @@ function ServiceDirectory() {
     cost: [],
     days: [],
     isOneOff: false,
-    maxDistance: 10 * 1000, // Default 10 km in meters
+    maxDistance: MAX_DISTANCE, 
     searchTerm: '',
     postcode: ''
 
@@ -32,6 +34,9 @@ function ServiceDirectory() {
   const [userLocation, setUserLocation] = useState(null);
   // keep track of if postcode valid
   const [postcodeIsValid, setPostcodeIsValid] = useState(null);
+   // New: Checkbox state
+  const [distanceEnabled, setDistanceEnabled] = useState(false);
+
 
 
   // load in the activity data from the googlesheet using fetchActivities (in data.js)
@@ -43,16 +48,39 @@ function ServiceDirectory() {
     loadActivities();
   }, []);
 
-  // Fetch browser location on component mount
+  // this needs to be declared befor get user location?
+  const updateActivityDistance = useCallback((activityId, newDistance) => {
+    setActivities((prevActivities) =>
+      prevActivities.map((activity) =>
+        activity.id === activityId ? { ...activity, distance: newDistance } : activity
+      )
+    );
+  }, []);
+
+  // Function to get the user's location when distance filter is enabled
   useEffect(() => {
     async function fetchLocation() {
-      const location = await getUserLocation();
-      if (location) {
-        setUserLocation(location);
+      if (distanceEnabled && !userLocation) {
+        const location = await getUserLocation();
+        if (location) {
+          setUserLocation(location);
+          // Update activity distances
+          activities.forEach((activity) => {
+            if (activity.lat && activity.long) {
+              const dist = calculateDistance(
+                location.lat,
+                location.long,
+                activity.lat,
+                activity.long
+              );
+              updateActivityDistance(activity.id, dist);
+            }
+          });
+        }
       }
     }
     fetchLocation();
-  }, []);
+  }, [distanceEnabled, userLocation, activities, updateActivityDistance]);
 
   // to reduce calls to update when setting filter options
   const debouncedSearchTerm = useMemo(
@@ -61,7 +89,7 @@ function ServiceDirectory() {
         ...prev,
         searchTerm: term
       }));
-    }, 200),
+    }, 10),
     []
   );
 
@@ -75,31 +103,55 @@ function ServiceDirectory() {
     togglePin(activityId, pinnedActivities, setPinnedActivities);
   };
 
+  // handles the input from the postcode box
   const handlePostcodeChange = async (e) => {
     const postcode = e.target.value.toUpperCase();
   
-    setFilterOptions(prev => ({
-      ...prev,
-      postcode
+    setFilterOptions((prev) => ({
+        ...prev,
+        postcode,
     }));
-  
+
     if (postcode === '') {
-      // Reset postcode validity and location if input is cleared
-      setPostcodeIsValid(null);
+        // Reset validity and user location when the field is cleared
+        setPostcodeIsValid(null);
+        const browserLocation = await getUserLocation();
+        if (browserLocation) {
+            setUserLocation(browserLocation);
+        }
     } else if (UK_POSTCODE_REGEX.test(postcode)) {
-      setPostcodeIsValid(true); // Set to valid
-      const coords = await fetchCoordinatesFromPostcode(postcode);
-      if (coords) {
-        setUserLocation(coords);
-      }
+        // Start with optimistic valid state (based on regex)
+        setPostcodeIsValid('validating'); // Optional: Indicates validation in progress
+
+        const coords = await fetchCoordinatesFromPostcode(postcode);
+        if (coords) {
+            setPostcodeIsValid(true); // Mark as valid if API finds the postcode
+            setUserLocation(coords); // Update user location to API-provided coordinates
+        } else {
+            setPostcodeIsValid(false); // Mark as invalid if API doesn't find it
+            // Fallback to browser location
+            const browserLocation = await getUserLocation();
+            if (browserLocation) {
+                setUserLocation(browserLocation);
+            }
+        }
     } else {
-      // If postcode is invalid, reset to browser-based location
-      setPostcodeIsValid(false);
-      const browserLocation = await getUserLocation();
-      if (browserLocation) {
-        setUserLocation(browserLocation);
-      }
+        // If postcode doesn't match regex, mark as invalid and fallback to browser location
+        setPostcodeIsValid(false);
+        const browserLocation = await getUserLocation();
+        if (browserLocation) {
+            setUserLocation(browserLocation);
+        }
     }
+  };
+
+
+
+  const handleSliderMovement = (value) => {
+    setFilterOptions((prev) => ({
+      ...prev,
+      maxDistance: Number(value) * 1000, // Convert km to meters
+    }));
   };
   
   // Apply filter to get only pinned activities
@@ -114,18 +166,10 @@ function ServiceDirectory() {
       filterCost: filterOptions.cost,
       filterDays: filterOptions.days,
       isOneOff: filterOptions.isOneOff,
-      maxDistance: filterOptions.maxDistance,
+      maxDistance: distanceEnabled ? filterOptions.maxDistance : null, // Only filter by distance if enabled
       userLocation
     });
-  }, [activities, filterOptions, userLocation]);
-
-  const updateActivityDistance = useCallback((activityId, newDistance) => {
-    setActivities((prevActivities) =>
-      prevActivities.map((activity) =>
-        activity.id === activityId ? { ...activity, distance: newDistance } : activity
-      )
-    );
-  }, []);
+  }, [activities, filterOptions, userLocation, distanceEnabled]);
 
 
   return (
@@ -149,52 +193,58 @@ function ServiceDirectory() {
         </button>
       </div>
 
-      {/* One-Off Checkbox */}
-      <div className="filter-section">
-      <label>
-          <input
-            type="checkbox"
-            checked={filterOptions.isOneOff}
-            onChange={(e) => setFilterOptions((prev) => ({
-              ...prev,
-              isOneOff: e.target.checked
-            }))}
-          />
-          One-off or events that do not repeat every week or month
-        </label>
-      </div>
+
 
       {/* Filter Section */}
 
       {/* Distance Slider */}
-      <div className="distance-slider-bar">
-        <h3>Max Distance</h3>
-        {/* Display the distance value, showing ∞ when slider is at maximum */}
-        <span className='dist-slider-value'>
-          {filterOptions.maxDistance === MAX_DISTANCE ? '∞' : `${filterOptions.maxDistance / 1000} km`}
-        </span>
+      <div className='filter-section-distance'>
         <input
-          type="range"
-          min="0"
-          max="10"
-          step="0.1"
-          value={filterOptions.maxDistance / 1000}
-          onChange={(e) => setFilterOptions((prev) => ({
-            ...prev,
-            maxDistance: Number(e.target.value) * 1000
-          }))}
-        />
-        <input
-          type="text"
-          placeholder="Your postcode..."
-          className="postcode-input"
-          title='Enter postcode for more accurate distances!'
-          value={filterOptions.postcode}
-          onChange={handlePostcodeChange}
-          style={{
-            backgroundColor: postcodeIsValid === null ? 'inherit' : postcodeIsValid ? 'lightgreen' : 'orange'
-          }} // Conditional styling
-        />
+            className='enable-dist-slider'
+            type="checkbox"
+            title='Select to filter by maximum distance'
+            checked={distanceEnabled}
+            onChange={(e) => setDistanceEnabled(e.target.checked)} // Enable/disable distance filter
+          />
+        <h3 className={distanceEnabled ? '' : 'disabled'}>Distance</h3>
+
+      </div>
+        <div className="distance-slider-bar">
+          <span className={distanceEnabled ? 'distance-slider-value' : 'disabled distance-slider-value'}>
+            {filterOptions.maxDistance === MAX_DISTANCE ? (
+              <Infinity title="Infinite Distance" />
+            ) : (
+              `${filterOptions.maxDistance / 1000} km`
+            )}
+          </span>
+          <input
+            type="range"
+            min="0"
+            max="10"
+            step="0.1"
+            value={filterOptions.maxDistance / 1000}
+            onChange={(e) => handleSliderMovement(e.target.value)}
+            disabled={!distanceEnabled || !userLocation} // Disabled when checkbox is unticked or user location is unavailable
+          />
+          <input
+              type="text"
+              placeholder="Your postcode..."
+              className={distanceEnabled ? 'postcode-input' : 'disabled postcode-input'}
+              title="Enter postcode for more accurate distances!"
+              value={filterOptions.postcode}
+              onChange={handlePostcodeChange}
+              disabled={!distanceEnabled} // Disable when the distance filter is not enabled
+              style={{
+                  backgroundColor: 
+                      postcodeIsValid === null
+                          ? 'inherit' // No postcode entered
+                          : postcodeIsValid === 'validating'
+                          ? 'lightyellow' // Validation in progress
+                          : postcodeIsValid
+                          ? 'lightgreen' // Valid postcode
+                          : 'orange', // Invalid postcode
+              }}
+          />
       </div>
       
       {/* Days */}
@@ -215,6 +265,19 @@ function ServiceDirectory() {
           </button>
         ))}
       </div>
+
+      {/* One-Off Checkbox */}
+      <label className='one-off-label'>
+        <input
+          type="checkbox"
+          checked={filterOptions.isOneOff}
+          onChange={(e) => setFilterOptions((prev) => ({
+            ...prev,
+            isOneOff: e.target.checked
+          }))}
+        />
+        One-off or events that do not repeat every week or month
+      </label>
 
       {/* Audience */}
       <div className="filter-section">
@@ -322,6 +385,7 @@ function ServiceDirectory() {
                   <th>Description</th>
                   <th>Audience</th>
                   <th>Venue</th>
+                  <th>Dist (km)</th>
                   <th>Day</th>
                   <th>Time</th>
                   <th>One-off Date</th>
@@ -345,6 +409,11 @@ function ServiceDirectory() {
                     <td>{activity.description}</td>
                     <td>{activity.audience}</td>
                     <td>{activity.venue}</td>
+                    <td>
+                      {distanceEnabled && activity.distance != null
+                        ? `${(activity.distance / 1000).toFixed(1)}` // Format distance to 1 decimal
+                        : "N/A"} {/* Display N/A if slider is deactivated */}
+                    </td>
                     <td>
                       {activity.daysOfWeek.map((day) => (
                         <React.Fragment key={day}>
@@ -420,6 +489,21 @@ function ServiceDirectory() {
         )}
 
       </div>{/* End of content based on active tab */}
+
+        {/* Footer */}
+  <footer className="footer">
+    <p>
+      &copy; {new Date().getFullYear() }
+      <a 
+        href="https://portfolio.nickharding.org/" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="footer-link"
+      >
+        Nick Harding
+      </a>
+    </p>
+  </footer>
     </div>
   );
 }

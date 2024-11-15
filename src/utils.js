@@ -1,5 +1,7 @@
 // utils.js
 
+import { MAX_DISTANCE } from "./constants";
+
 // Toggle a filter on or off
 export function toggleFilter(array = [], value) {
   return array.includes(value)
@@ -90,11 +92,10 @@ export function applyFilters({
     // One-off event matching: only apply if `isOneOff` is true
     const matchesOneOff = !isOneOff || (activity.timePeriod === 'One-off Event' || activity.timePeriod === 'Other (non-repeating)');
 
-    // Distance matching: skip if maxDistance is set to 10,000 meters (10 km)
-    // Calculate distance only if maxDistance is set and userLocation is available
-    const matchesDistance = maxDistance === 10000 || activity.distance <= maxDistance;
+    // includes activity if activity.distance is smaller than current maxDistance, maxDistance is null or the same as the CONST MAX_DISTANCE
+    const matchesDistance = maxDistance === MAX_DISTANCE || activity.distance <= maxDistance || maxDistance === null;
 
-       console.log(activity.distance, maxDistance, activity.distance <= maxDistance);
+      // console.log(activity.distance, maxDistance, activity.distance <= maxDistance);
 
     return matchesSearch && matchesAudience && matchesCost && matchesDay && matchesOneOff && matchesDistance;
   });
