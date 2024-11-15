@@ -65,7 +65,7 @@ h1 {
 .cards-view {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(360px, 360px));
-  gap: 30px; 
+  gap: 20px; 
   justify-content: center;
 }
 
@@ -175,15 +175,19 @@ h1 {
 
 @media (max-width: 860px) {
   .cards-view {
-    grid-template-columns: 1.0fr; /* Single column for full-width stacking */
+    display: flex; /* Use Flexbox for alignment */
+    flex-direction: column; /* Stack cards vertically */
+    align-items: center; /* Center cards horizontally */
   }
 
   .card {
-    width: 100%; /* Make cards take full width of container */
+    width: 100%; /* Adjust card width for a balanced look */
+    max-width: 100%; /* Set a maximum width for better readability */
+    margin: 0px 0; /* Add vertical spacing between cards */
   }
 
   .container {
-    padding: 0 10px; /* changes padding for smaller screens */
+    padding: 0 10px; /* Adjust padding for smaller screens */
   }
 }
 
@@ -419,7 +423,7 @@ h1 {
 }
 
 /* Pinned View Styling*/
-.pinned-view .card {
+.pinned-view .card{
   display: block;
   width: 100%;
   margin-bottom: 20px;

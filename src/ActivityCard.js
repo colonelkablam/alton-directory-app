@@ -1,39 +1,14 @@
-// ActivityCard.js
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { MapPin, Clock, User, PoundSterling, Globe, Phone, Users, Footprints } from 'lucide-react';
-import { calculateDistance } from './navUtils';
 
-
-function ActivityCard({ activity, togglePin, pinnedActivities, updateActivityDistance, userLocation }) {
+function ActivityCard({ activity, togglePin, pinnedActivities, distanceEnabled }) {
   // Check if this activity is pinned
   const isPinned = pinnedActivities.includes(activity.id);
-  // State to store the distance
-  const [distance, setDistance] = useState(null);
 
   // Format the time-related information into a single string
   const timeInfo = activity.timePeriod === 'One-off Event'
     ? `${activity.oneOffDate} (${activity.timePeriod})`
     : activity.timePeriod;
-
-    useEffect(() => {
-      if (activity.lat && activity.long && userLocation) {
-        const dist = calculateDistance(
-          userLocation.lat,
-          userLocation.long,
-          activity.lat,
-          activity.long
-        );
-  
-        setDistance(dist); // Set the calculated distance
-        
-        if (updateActivityDistance) {
-          updateActivityDistance(activity.id, dist); // Update parent with calculated distance
-        }
-      } else {
-        setDistance(null); // Set distance to null if userLocation or activity coordinates are missing
-      }
-    }, [activity.id, activity.lat, activity.long, userLocation, updateActivityDistance]);
-    
 
   return (
     <div className="card">
@@ -66,8 +41,8 @@ function ActivityCard({ activity, togglePin, pinnedActivities, updateActivityDis
             <span className="icon">
               <Footprints size={16} />
             </span>
-            <span>{distance === null ? "unknown" : `${(distance / 1000).toFixed(1)} km`}</span>
-          </div>
+            {!distanceEnabled ? '-' : activity.distance != null ? `${(activity.distance / 1000).toFixed(1)} km` : 'unknown'}
+            </div>
 
           <div className="detail">
             <span className="icon">

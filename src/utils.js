@@ -1,5 +1,5 @@
 // utils.js
-
+import { calculateDistance } from './navUtils';
 import { MAX_DISTANCE } from "./constants";
 
 // Toggle a filter on or off
@@ -54,19 +54,30 @@ export function getCostType(cost) {
 
 // Main filtering function
 export function applyFilters({ 
-  activities = [], // Default to an empty array if undefined
-  searchTerm = '', // Default to an empty string if undefined
-  filterAudience = [], // Default to an empty array if undefined
-  filterCost = [], // Default to an empty array if undefined
-  filterDays = [], // Default to an empty array if undefined
-  isOneOff = false, // Default to false if undefined
-  maxDistance,
+  activities = [], 
+  searchTerm = '', 
+  filterAudience = [], 
+  filterCost = [], 
+  filterDays = [], 
+  isOneOff = false, 
+  maxDistance, 
   userLocation 
 }) {
   const searchTokens = searchTerm.toLowerCase().split(' ').filter(Boolean);
 
-  return activities.filter(activity => {
-    const name = activity.name || ''; // Default to empty string if undefined
+  return activities.map(activity => {
+    // Calculate distance if userLocation exists and activity has coordinates
+    if (userLocation && activity.lat && activity.long) {
+      const distance = calculateDistance(
+        userLocation.lat,
+        userLocation.long,
+        activity.lat,
+        activity.long
+      );
+      activity.distance = distance; // Update the activity object with the new distance
+    }
+
+    const name = activity.name || '';
     const description = activity.description || '';
     const venue = activity.venue || '';
     const organiser = activity.organiser || '';
@@ -92,13 +103,17 @@ export function applyFilters({
     // One-off event matching: only apply if `isOneOff` is true
     const matchesOneOff = !isOneOff || (activity.timePeriod === 'One-off Event' || activity.timePeriod === 'Other (non-repeating)');
 
-    // includes activity if activity.distance is smaller than current maxDistance, maxDistance is null or the same as the CONST MAX_DISTANCE
-    const matchesDistance = maxDistance === MAX_DISTANCE || activity.distance <= maxDistance || maxDistance === null;
+    // Distance matching: check if activity.distance is within the maxDistance
+    const matchesDistance = 
+      maxDistance === MAX_DISTANCE || 
+      maxDistance === null ||
+      activity.distance == null || 
+      (activity.distance != null && activity.distance <= maxDistance);
 
-      // console.log(activity.distance, maxDistance, activity.distance <= maxDistance);
-
-    return matchesSearch && matchesAudience && matchesCost && matchesDay && matchesOneOff && matchesDistance;
-  });
+    return matchesSearch && matchesAudience && matchesCost && matchesDay && matchesOneOff && matchesDistance
+      ? activity
+      : null; // Exclude activities that don't match all filters
+  }).filter(Boolean); // Remove nulls
 }
 
 

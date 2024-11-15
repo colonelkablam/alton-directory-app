@@ -166,8 +166,8 @@ function ServiceDirectory() {
       filterCost: filterOptions.cost,
       filterDays: filterOptions.days,
       isOneOff: filterOptions.isOneOff,
-      maxDistance: distanceEnabled ? filterOptions.maxDistance : null, // Only filter by distance if enabled
-      userLocation
+      maxDistance: distanceEnabled ? filterOptions.maxDistance : null,
+      userLocation,
     });
   }, [activities, filterOptions, userLocation, distanceEnabled]);
 
@@ -359,13 +359,11 @@ function ServiceDirectory() {
             {pinnedActivitiesData.length > 0 ? (
               pinnedActivitiesData.map((activity) => (
                 <ActivityCard
-                  key={activity.id}
-                  activity={activity}
-                  togglePin={handleTogglePin}
-                  pinnedActivities={pinnedActivities}
-                  updateActivityDistance={updateActivityDistance}
-                  userLocation={userLocation}
-
+                key={activity.id}
+                activity={activity}
+                togglePin={handleTogglePin}
+                pinnedActivities={pinnedActivities}
+                distanceEnabled={distanceEnabled}
                 />
               ))
             ) : (
@@ -440,12 +438,11 @@ function ServiceDirectory() {
             {filteredActivities.length > 0 ? (
               filteredActivities.map((activity) => (
                 <ActivityCard
-                  key={activity.id}
-                  activity={activity}
-                  togglePin={handleTogglePin}
-                  pinnedActivities={pinnedActivities}
-                  updateActivityDistance={updateActivityDistance}
-                  userLocation={userLocation}
+                key={activity.id}
+                activity={activity}
+                togglePin={handleTogglePin}
+                pinnedActivities={pinnedActivities}
+                distanceEnabled={distanceEnabled}
                 />
               ))
             ) : (
@@ -468,12 +465,11 @@ function ServiceDirectory() {
                   <div className="cards-view">
                     {dayActivities.map((activity) => (
                       <ActivityCard
-                        key={activity.id}
-                        activity={activity}
-                        togglePin={handleTogglePin}
-                        pinnedActivities={pinnedActivities}
-                        updateActivityDistance={updateActivityDistance}
-                        userLocation={userLocation}
+                      key={activity.id}
+                      activity={activity}
+                      togglePin={handleTogglePin}
+                      pinnedActivities={pinnedActivities}
+                      distanceEnabled={distanceEnabled}
                       />
                     ))}
                   </div>
