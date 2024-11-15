@@ -1,6 +1,6 @@
 // data.js
 import { UK_POSTCODE_REGEX } from './constants.js';
-import { isValidLondonCoordinate } from './navUtils.js';
+import { isValidLondonCoordinate, fetchCoordinatesFromPostcode } from './navUtils.js';
 
 
 const API_KEY = 'AIzaSyBdKlI9mxJJfv5xsuVFAK7ncjbES2A1kaI'; // Replace with your actual API key
@@ -32,35 +32,30 @@ export async function fetchActivities() {
         const venue = row[5] || "";
         const postcodeMatch = venue.match(UK_POSTCODE_REGEX);
         const postcode = postcodeMatch ? postcodeMatch[0].toUpperCase() : null;
-
+    
         let lat = null;
         let long = null;
-
-        // it is assumed entered long lat will be more accurate than postcode value
-        // if long and lat IS valid use for values
-        if (isValidLondonCoordinate(row[6], row[7]))
-        {
+    
+        // If valid coordinates are provided in the spreadsheet, use them
+        if (isValidLondonCoordinate(row[6], row[7])) {
           lat = parseFloat(row[6]);
           long = parseFloat(row[7]);
-
-          // otherwise try and use postcode if it exists to get approx long and lat
-        } else if (postcode) {
-          try {
-            const postcodeResponse = await fetch(`https://api.postcodes.io/postcodes/${postcode}`);
-            const postcodeData = await postcodeResponse.json();
-
-            if (postcodeData.status === 200 && postcodeData.result) {
-              lat = postcodeData.result.latitude;
-              long = postcodeData.result.longitude;
-            }
-          } catch (error) {
-            console.error("Error fetching postcode data:", error);
+        } 
+        // Otherwise, try fetching coordinates using the postcode
+        else if (postcode) {
+          const coords = await fetchCoordinatesFromPostcode(postcode); // Use the existing function
+          if (coords) {
+            lat = coords.lat;
+            long = coords.long;
+          } else {
+            console.warn(`Failed to resolve coordinates for postcode: ${postcode}`);
           }
         }
-
+    
         return { row, index, lat, long, postcode };
       })
     );
+    
 
     // Step 2: Map the final activity data
     const activities = activitiesWithPostcodes.map(({ row, index, lat, long, postcode }) => {
