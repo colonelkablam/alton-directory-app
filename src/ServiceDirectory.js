@@ -454,7 +454,9 @@ function ServiceDirectory() {
         {/* Day View Tab Open */}
         {activeTab === 'days' && (
           <div className="day-view tab-content-blue">
-            {(filterOptions.days.length > 0 ? filterOptions.days : DAYS_OF_WEEK).map(day => {
+            {DAYS_OF_WEEK.filter(day => 
+              filterOptions.days.length === 0 || filterOptions.days.includes(day)
+            ).map(day => {
               const dayActivities = filteredActivities.filter(activity =>
                 activity.daysOfWeek.includes(day)
               );
@@ -465,11 +467,11 @@ function ServiceDirectory() {
                   <div className="cards-view">
                     {dayActivities.map((activity) => (
                       <ActivityCard
-                      key={activity.id}
-                      activity={activity}
-                      togglePin={handleTogglePin}
-                      pinnedActivities={pinnedActivities}
-                      distanceEnabled={distanceEnabled}
+                        key={activity.id}
+                        activity={activity}
+                        togglePin={handleTogglePin}
+                        pinnedActivities={pinnedActivities}
+                        distanceEnabled={distanceEnabled}
                       />
                     ))}
                   </div>
@@ -477,12 +479,13 @@ function ServiceDirectory() {
                 </div>
               ) : null;
             })}
-             {/* Fallback message if no activities match */}
+            {/* Fallback message if no activities match */}
             {filteredActivities.length === 0 && (
               <p>No activities match filter search!</p>
             )}
           </div>
         )}
+
 
       </div>{/* End of content based on active tab */}
 
