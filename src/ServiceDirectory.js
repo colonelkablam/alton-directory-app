@@ -34,8 +34,11 @@ function ServiceDirectory() {
   const [userLocation, setUserLocation] = useState(null);
   // keep track of if postcode valid
   const [postcodeIsValid, setPostcodeIsValid] = useState(null);
-   // New: Checkbox state
+   // Distance checkbox state
   const [distanceEnabled, setDistanceEnabled] = useState(false);
+  // Display More Filetrs state
+  const [showFilters, setShowFilters] = useState(false);
+
 
 
 
@@ -89,7 +92,7 @@ function ServiceDirectory() {
         ...prev,
         searchTerm: term
       }));
-    }, 10),
+    }, 20),
     []
   );
 
@@ -189,8 +192,22 @@ function ServiceDirectory() {
         </button>
       </div>
 
+      {/* Toggle Filters Checkbox */}
+      <div className="filter-section-checkbox">
+        <input
+          className="enable-content"
+          type="checkbox"
+          title="Show all the filter options"
+          checked={!!showFilters} // Ensure it's always a boolean
+          onChange={(e) => setShowFilters(e.target.checked)}
+          />
+        <h3 className={showFilters ? '' : 'disabled'}>Show All Search Filters</h3>
+      </div>
 
       {/* Filter Section */}
+
+      {showFilters && (
+  <>
 
       {/* Distance Slider */}
       <DistanceFilter
@@ -210,6 +227,9 @@ function ServiceDirectory() {
         COSTS={COSTS}
         DAYS_OF_WEEK={DAYS_OF_WEEK}
       />
+
+</>
+)}
 
       {/* Tabs for Viewing Options */}
       <div className="view-tabs">

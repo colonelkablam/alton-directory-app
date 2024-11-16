@@ -6,8 +6,8 @@ const FilterOptions = ({ filterOptions, setFilterOptions, AUDIENCES, COSTS, DAYS
 
   <div className="filters">
 
-        {/* Days Filter */}
-        <div className="filter-section-days">
+    {/* Days Filter */}
+    <div className="filter-section-days">
       <h3>Days</h3>
       {DAYS_OF_WEEK.map(day => (
         <button

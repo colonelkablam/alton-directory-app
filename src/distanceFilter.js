@@ -13,9 +13,9 @@ const DistanceFilter = ({
   postcodeIsValid 
 }) => (
   <div className="distance-filter">
-    <div className="filter-section-distance">
+    <div className="filter-section-checkbox">
       <input
-        className="enable-dist-slider"
+        className="enable-content"
         type="checkbox"
         title="Select to filter by maximum distance"
         checked={!!distanceEnabled} // Ensure it's always a boolean

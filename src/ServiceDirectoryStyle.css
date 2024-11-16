@@ -200,8 +200,16 @@ h1 {
   margin-bottom: 10px;
 }
 
-.filter-section-distance {
+.filter-section-checkbox {
   display: flex;
+  height: 50px; /* Set a fixed height */
+  align-items: center; /* Center vertically */
+}
+
+.enable-content {
+  width: 20px !important;
+  height: 20px !important;
+
 }
 
 .filter-section-days button:last-child {
@@ -283,10 +291,6 @@ h1 {
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-left: 5px;
-}
-
-.enable-dist-slider {
-  width: 20px !important;
 }
 
 .disabled {
