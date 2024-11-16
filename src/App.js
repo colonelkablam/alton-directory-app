@@ -1,5 +1,5 @@
 import React from 'react';
-import ServiceDirectory from './ServiceDirectory';
+import ServiceDirectory from './serviceDirectory';
 
 function App() {
   return <ServiceDirectory />;
