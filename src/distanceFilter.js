@@ -18,7 +18,7 @@ const DistanceFilter = ({
         className="enable-dist-slider"
         type="checkbox"
         title="Select to filter by maximum distance"
-        checked={distanceEnabled}
+        checked={!!distanceEnabled} // Ensure it's always a boolean
         onChange={(e) => setDistanceEnabled(e.target.checked)}
       />
       <h3 className={distanceEnabled ? '' : 'disabled'}>Distance</h3>
@@ -36,7 +36,7 @@ const DistanceFilter = ({
         min="0"
         max="10"
         step="0.1"
-        value={maxDistance / 1000}
+        value={(maxDistance || 0) / 1000} // Ensure it has a fallback value
         onChange={(e) => handleSliderMovement(e.target.value)}
         disabled={!distanceEnabled}
       />
@@ -45,7 +45,7 @@ const DistanceFilter = ({
         placeholder="Your postcode..."
         className={distanceEnabled ? 'postcode-input' : 'disabled postcode-input'}
         title="Enter postcode for more accurate distances!"
-        value={postcode}
+        value={postcode || ''} // Default to empty string
         onChange={handlePostcodeChange}
         disabled={!distanceEnabled}
         style={{

@@ -155,8 +155,6 @@ function ServiceDirectory() {
     }));
   };
   
-  // Apply filter to get only pinned activities
-  const pinnedActivitiesData = activities.filter(activity => pinnedActivities.includes(activity.id));
   
   // Apply filters only when a filter changes
   const filteredActivities = useMemo(() => {
