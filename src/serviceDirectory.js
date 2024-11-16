@@ -193,7 +193,7 @@ function ServiceDirectory() {
       </div>
 
       {/* Toggle Filters Checkbox */}
-      <div className="filter-section-checkbox">
+      <label className="filter-section-checkbox">
         <input
           className="enable-content"
           type="checkbox"
@@ -202,7 +202,8 @@ function ServiceDirectory() {
           onChange={(e) => setShowFilters(e.target.checked)}
           />
         <h3 className={showFilters ? '' : 'disabled'}>Show All Search Filters</h3>
-      </div>
+      </label>
+
 
       {/* Filter Section */}
 

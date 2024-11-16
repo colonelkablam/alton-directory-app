@@ -13,7 +13,7 @@ const DistanceFilter = ({
   postcodeIsValid 
 }) => (
   <div className="distance-filter">
-    <div className="filter-section-checkbox">
+    <label className="filter-section-checkbox">
       <input
         className="enable-content"
         type="checkbox"
@@ -22,7 +22,7 @@ const DistanceFilter = ({
         onChange={(e) => setDistanceEnabled(e.target.checked)}
       />
       <h3 className={distanceEnabled ? '' : 'disabled'}>Distance</h3>
-    </div>
+    </label>
     <div className="distance-slider-bar">
       <span className={distanceEnabled ? 'distance-slider-value' : 'disabled distance-slider-value'}>
         {maxDistance === MAX_DISTANCE ? (
