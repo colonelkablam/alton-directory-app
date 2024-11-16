@@ -100,7 +100,7 @@ function ServiceDirectory() {
   
   // Function to toggle if activity pinned - passed as prop to each activity card 
   const handleTogglePin = (activityId) => {
-    togglePin(activityId, pinnedActivities, setPinnedActivities);
+    togglePin(activityId, setPinnedActivities);
   };
 
   // handles the input from the postcode box

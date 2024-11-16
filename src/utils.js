@@ -9,7 +9,7 @@ export function toggleFilter(array = [], value) {
     : [...array, value];
 }
 
-export function togglePin(activityId, pinnedActivities, setPinnedActivities) {
+export function togglePin(activityId, setPinnedActivities) {
   setPinnedActivities(prevPinned =>
     prevPinned.includes(activityId)
       ? prevPinned.filter(id => id !== activityId) // Unpin if already pinned
@@ -28,7 +28,7 @@ export function resetFilters(setFilterOptions) {
     cost: [],
     days: [],
     isOneOff: false,
-    maxDistance: 50 * 1000, // Reset to default
+    maxDistance: MAX_DISTANCE, // Reset to default
     searchTerm: ''
   });
 }
@@ -105,7 +105,7 @@ export function applyFilters({
 
     // Distance matching: check if activity.distance is within the maxDistance
     const matchesDistance = 
-      maxDistance === MAX_DISTANCE || 
+      maxDistance >= MAX_DISTANCE || 
       maxDistance === null ||
       activity.distance == null || 
       (activity.distance != null && activity.distance <= maxDistance);
