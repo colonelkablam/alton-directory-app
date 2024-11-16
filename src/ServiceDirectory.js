@@ -10,9 +10,6 @@ import FilterOptions from './filterOptions.js';
 import TabbedView from './tabbedView.js';
 
 
-
-
-
 // Main Component
 function ServiceDirectory() {
 
@@ -214,16 +211,6 @@ function ServiceDirectory() {
         DAYS_OF_WEEK={DAYS_OF_WEEK}
       />
 
-      {/* Clear Pins Button */}
-      <div className="pinned-view-button-box">
-        <button 
-          className="clear-pins-button" 
-          onClick={() => clearPinnedActivities(setPinnedActivities)}
-        >
-          Clear Pins
-        </button>
-      </div>
-
       {/* Tabs for Viewing Options */}
       <div className="view-tabs">
         <h3 className="event-view-title">Event View</h3>
@@ -263,6 +250,9 @@ function ServiceDirectory() {
         pinnedActivities={pinnedActivities}
         distanceEnabled={distanceEnabled}
         selectedDays={filterOptions.days || []} // Pass days as selectedDays
+        clearPinnedActivities={clearPinnedActivities} // Pass the function
+        setPinnedActivities={setPinnedActivities} // Pass the state setter
+        
       />
       </div>
 

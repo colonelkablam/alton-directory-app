@@ -19,7 +19,7 @@
 }
 
 .container {
-  max-width: 1200px; /* Limits the container width to 1210px */
+  max-width: 1160px; /* Limits the container width to 1210px */
   min-width: 375px; /* Limits the container width to 1210px */
 
   margin: 0 auto; /* Centers the container horizontally */
@@ -389,7 +389,6 @@ h1 {
   background-color: var(--list-panel-active-colour);
   padding: 16px;
   border-radius: 8px;
-  padding-top: 40px;
 }
 
 .tab-content-purple {
@@ -411,7 +410,7 @@ h1 {
 }
 
 .week-day-title {
-  margin: 20px 0 10px 30px;
+  margin: 10px 0 10px 30px;
   font-size: x-large;
   color: #0c5aad;
 }

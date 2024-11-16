@@ -10,7 +10,9 @@ const TabbedView = ({
   togglePin, 
   pinnedActivities, 
   distanceEnabled,
-  selectedDays
+  selectedDays,
+  clearPinnedActivities,
+  setPinnedActivities
 
 }) => {
 
@@ -20,6 +22,16 @@ const TabbedView = ({
     case 'pinned':
       return (
         <div className="pinned-view tab-content-yellow">
+
+          {/* Clear Pins Button */}
+          <div className="pinned-view-button-box">
+            <button 
+              className="clear-pins-button" 
+              onClick={() => clearPinnedActivities(setPinnedActivities)}
+            >
+              Clear Pins
+            </button>
+          </div>
         
           {/* Render Pinned Activities */}
           {pinnedActivities.length > 0 ? (
@@ -95,13 +107,10 @@ const TabbedView = ({
         </div>
       );
 
-    case 'cards':
-      return (
-        <div className="cards-view tab-content-green">
-
-          {/* Render list of Activities after filter */}
-          {filteredActivities.length > 0 ? (
-            filteredActivities.map(activity => (
+      case 'cards':
+        return filteredActivities.length > 0 ? (
+          <div className="cards-view tab-content-green">
+            {filteredActivities.map(activity => (
               <ActivityCard
                 key={activity.id}
                 activity={activity}
@@ -109,12 +118,14 @@ const TabbedView = ({
                 pinnedActivities={pinnedActivities}
                 distanceEnabled={distanceEnabled}
               />
-            ))
-          ) : (
+            ))}
+          </div>
+        ) : (
+          <div className="cards=view tab-content-green">
             <p>No activities match filter search!</p>
-          )}
-        </div>
-      );
+          </div>
+        );
+      
 
       case 'days':
         return (
