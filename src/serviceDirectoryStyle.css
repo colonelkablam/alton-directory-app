@@ -32,6 +32,7 @@ body, html {
   padding: 0;
   box-sizing: border-box;
   font-family: Helvetica, Arial, sans-serif;
+  background-color: rgb(242, 242, 242);
 }
 
 body {
@@ -49,59 +50,6 @@ h1 {
   display: inline;
 }
 
-.detailed-card {
-  padding: 20px;
-  background: #fff;
-  max-width: 800px;
-  margin: auto;
-}
-
-.detailed-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.back-button {
-  background: none;
-  border: none;
-  color: #007bff;
-  cursor: pointer;
-  font-size: 16px;
-  margin-right: 10px;
-}
-
-.detailed-title {
-  flex-grow: 1;
-  text-align: center;
-}
-
-.pin-checkbox input {
-  transform: scale(1.5);
-}
-
-.map-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 20px 0;
-  border: 1px dashed #ccc;
-  padding: 20px;
-}
-
-.detailed-info {
-  margin-top: 20px;
-}
-
-.detail {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.detail .icon {
-  margin-right: 10px;
-}
 
 /* General card styling */
 .card {

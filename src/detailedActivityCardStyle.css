@@ -1,0 +1,78 @@
+.detailed-card {
+    padding: 20px;
+    background: #fff;
+    max-width: 800px;
+    margin: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  .detailed-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .detailed-back-button {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 5px 10px;
+  }
+  
+  .detailed-back-button:hover {
+    text-decoration: underline;
+  }
+  
+  .detailed-title {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .detailed-pin-checkbox input {
+    transform: scale(1.5);
+  }
+  
+  .detailed-map-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+    border: 1px dashed #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    background: #f9f9f9;
+  }
+  
+  .detailed-info {
+    margin-top: 20px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #555;
+  }
+  
+  .detailed-detail {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .detailed-icon {
+    margin-right: 10px;
+  }
+  
+  .detailed-detail a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .detailed-detail a:hover {
+    text-decoration: underline;
+  }
+  

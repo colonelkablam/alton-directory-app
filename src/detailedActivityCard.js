@@ -1,6 +1,8 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MapPin, Clock, User, PoundSterling, Phone, Users, Globe, Info, Calendar, Map } from "lucide-react";
+import './detailedActivityCardStyle.css';
+
 
 function DetailedActivityCard() {
   const { state } = useLocation(); // Access the state passed during navigation
@@ -23,11 +25,11 @@ function DetailedActivityCard() {
   return (
     <div className="detailed-card">
       <div className="detailed-card-header">
-        <button onClick={() => navigate(-1)} className="back-button">
+        <button onClick={() => navigate(-1)} className="detailed-back-button">
           Back
         </button>
         <h1 className="detailed-title">{activity.name}</h1>
-        <div className="pin-checkbox">
+        <div className="detailed-pin-checkbox">
           <input
             type="checkbox"
             checked={false} // Placeholder for pin functionality
@@ -38,7 +40,7 @@ function DetailedActivityCard() {
       </div>
 
       {/* Map Placeholder */}
-      <div className="map-placeholder">
+      <div className="detailed-map-placeholder">
         <Map size={64} />
         <p>Map will be displayed here.</p>
       </div>
@@ -50,22 +52,22 @@ function DetailedActivityCard() {
         {/* Details */}
         <div className="detailed-info">
           {/* Venue */}
-          <div className="detail">
-            <span className="icon">
+          <div className="detailed-detail">
+            <span className="detailed-icon">
               <MapPin size={20} />
             </span>
             <span>{activity.venue}</span>
           </div>
-          <div className="detail">
-            <span className="icon">
+          <div className="detailed-detail">
+            <span className="detailed-icon">
               <Map size={20} />
             </span>
             <span>Coordinates: {activity.lat}, {activity.long}</span>
           </div>
 
           {/* Audience */}
-          <div className="detail">
-            <span className="icon">
+          <div className="detailed-detail">
+            <span className="detailed-icon">
               <Users size={20} />
             </span>
             <span>
@@ -76,8 +78,8 @@ function DetailedActivityCard() {
           </div>
 
           {/* Audience details*/}
-          <div className="detail">
-            <span className="icon">
+          <div className="detailed-detail">
+            <span className="detailed-icon">
               <Info size={20} />
             </span>
             <span>
@@ -88,8 +90,8 @@ function DetailedActivityCard() {
           </div>
 
           {/* Time and Date */}
-          <div className="detail">
-            <span className="icon">
+          <div className="detailed-detail">
+            <span className="detailed-icon">
               <Clock size={20} />
             </span>
             <span>
@@ -101,32 +103,32 @@ function DetailedActivityCard() {
           </div>
 
           {/* Organiser */}
-          <div className="detail">
-            <span className="icon">
+          <div className="detailed-detail">
+            <span className="detailed-icon">
               <User size={20} />
             </span>
             <span>{activity.organiser}</span>
           </div>
 
           {/* Cost */}
-          <div className="detail">
-            <span className="icon">
+          <div className="detailed-detail">
+            <span className="detailed-icon">
               <PoundSterling size={20} />
             </span>
             <span>{activity.cost || "Free"}</span>
           </div>
 
           {/* Contact */}
-          <div className="detail">
-            <span className="icon">
+          <div className="detailed-detail">
+            <span className="detailed-icon">
               <Phone size={20} />
             </span>
             <span>{activity.contact || "No contact details provided"}</span>
           </div>
 
           {/* FIS Link */}
-          <div className="detail">
-            <span className="icon">
+          <div className="detailed-detail">
+            <span className="detailed-icon">
               <Globe size={20} />
             </span>
             {activity.fisLink ? (
