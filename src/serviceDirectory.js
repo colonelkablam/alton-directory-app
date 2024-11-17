@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useContext, useCallback } from 'react';
+import { ServiceDirectoryContext } from "./serviceDirectoryContext.js";
 import debounce from 'lodash.debounce';
 import './serviceDirectoryStyle.css';
 import { fetchActivities } from './data.js';
 import { resetFilters, togglePin, applyFilters, clearPinnedActivities} from './utils.js';
-import { DAYS_OF_WEEK, AUDIENCES, COSTS, UK_POSTCODE_REGEX, MAX_DISTANCE} from './constants.js';
+import { DAYS_OF_WEEK, AUDIENCES, COSTS, UK_POSTCODE_REGEX} from './constants.js';
 import { getUserLocation, fetchCoordinatesFromPostcode, calculateDistance } from './navUtils.js';
 import DistanceFilter from './distanceFilter.js';
 import FilterOptions from './filterOptions.js';
@@ -13,33 +14,23 @@ import TabbedView from './tabbedView.js';
 // Main Component
 function ServiceDirectory() {
 
-  // combined filter states
-  const [filterOptions, setFilterOptions] = useState({
-    audience: [],
-    cost: [],
-    days: [],
-    isOneOff: false,
-    maxDistance: MAX_DISTANCE, 
-    searchTerm: '',
-    postcode: ''
+  // Access state and setters from the ServiceDirectoryContext
+  const {
+    activeTab,
+    setActiveTab,
+    filterOptions,
+    setFilterOptions,
+    pinnedActivities,
+    setPinnedActivities,
+    showFilters,
+    setShowFilters,
+    distanceEnabled,
+    setDistanceEnabled,
+  } = useContext(ServiceDirectoryContext);
 
-  });  
-  // Store pinned activity IDs
-  const [pinnedActivities, setPinnedActivities] = useState([]);
-   // state for active tab view
-  const [activeTab, setActiveTab] = useState('days');
-   // initialise activities array
   const [activities, setActivities] = useState([]);
-  // user location
   const [userLocation, setUserLocation] = useState(null);
-  // keep track of if postcode valid
   const [postcodeIsValid, setPostcodeIsValid] = useState(null);
-   // Distance checkbox state
-  const [distanceEnabled, setDistanceEnabled] = useState(false);
-  // Display More Filetrs state
-  const [showFilters, setShowFilters] = useState(false);
-
-
 
 
   // load in the activity data from the googlesheet using fetchActivities (in data.js)
@@ -87,13 +78,14 @@ function ServiceDirectory() {
 
   // to reduce calls to update when setting filter options
   const debouncedSearchTerm = useMemo(
-    () => debounce((term) => {
-      setFilterOptions(prev => ({
-        ...prev,
-        searchTerm: term
-      }));
-    }, 20),
-    []
+    () =>
+      debounce((term) => {
+        setFilterOptions((prev) => ({
+          ...prev,
+          searchTerm: term,
+        }));
+      }, 20),
+    [setFilterOptions] // Include setFilterOptions as a dependency
   );
 
   const handleSearchChange = (e) => {

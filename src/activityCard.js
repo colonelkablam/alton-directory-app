@@ -1,9 +1,27 @@
-import React from 'react';
-import { MapPin, Clock, User, PoundSterling, Globe, Phone, Users, Footprints } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { MapPin, Clock, User, PoundSterling, Globe, Phone, Users, Footprints, Info } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
+
+
 
 function ActivityCard({ activity, togglePin, pinnedActivities, distanceEnabled }) {
   // Check if this activity is pinned
   const isPinned = pinnedActivities.includes(activity.id);
+  const navigate = useNavigate();
+
+  const handleClickToDetails = () => {
+    sessionStorage.setItem("scrollPosition", window.scrollY);
+    navigate(`/activity/${activity.id}`, { state: { activity } }); // Pass activity in state
+  };
+
+  useEffect(() => {
+    const savedPosition = sessionStorage.getItem("scrollPosition");
+    if (savedPosition) {
+      window.scrollTo(0, parseInt(savedPosition, 10));
+      sessionStorage.removeItem("scrollPosition");
+    }
+  }, []);
+
 
   // Format the time-related information into a single string
   const timeInfo = activity.timePeriod === 'One-off Event'
@@ -15,6 +33,12 @@ function ActivityCard({ activity, togglePin, pinnedActivities, distanceEnabled }
       <div className="card-content">
 
         <div className="card-title-and-checkbox">
+        <button onClick={handleClickToDetails}>
+        <span className="icon">
+              <Info size={20} />
+            </span>
+        </button>
+
           <h3 className="card-title two-line-textbox">{activity.name}</h3>
           <div className="pin-checkbox">
             <input

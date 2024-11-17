@@ -49,6 +49,18 @@ h1 {
   display: inline;
 }
 
+.detailed-card {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: white;
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 20px;
+}
+
 /* General card styling */
 .card {
   display: flex;
