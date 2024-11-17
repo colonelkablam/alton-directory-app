@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useMemo, useContext, useCallback } from 'react';
+import React, { useEffect, useMemo, useContext, useCallback } from 'react';
 import { ServiceDirectoryContext } from "./serviceDirectoryContext.js";
-import debounce from 'lodash.debounce';
 import './serviceDirectoryStyle.css';
 import { fetchActivities } from './data.js';
 import { resetFilters, togglePin, applyFilters, clearPinnedActivities} from './utils.js';
@@ -26,11 +25,13 @@ function ServiceDirectory() {
     setShowFilters,
     distanceEnabled,
     setDistanceEnabled,
+    activities,
+    setActivities,
+    userLocation,
+    setUserLocation,
+    postcodeIsValid,
+    setPostcodeIsValid,
   } = useContext(ServiceDirectoryContext);
-
-  const [activities, setActivities] = useState([]);
-  const [userLocation, setUserLocation] = useState(null);
-  const [postcodeIsValid, setPostcodeIsValid] = useState(null);
 
 
   // load in the activity data from the googlesheet using fetchActivities (in data.js)
@@ -40,7 +41,7 @@ function ServiceDirectory() {
       setActivities(data);
     }
     loadActivities();
-  }, []);
+  }, [setActivities]);
 
   // this needs to be declared befor get user location?
   const updateActivityDistance = useCallback((activityId, newDistance) => {
@@ -49,7 +50,7 @@ function ServiceDirectory() {
         activity.id === activityId ? { ...activity, distance: newDistance } : activity
       )
     );
-  }, []);
+  }, [setActivities]);
 
   // Function to get the user's location when distance filter is enabled
   useEffect(() => {
@@ -74,23 +75,14 @@ function ServiceDirectory() {
       }
     }
     fetchLocation();
-  }, [distanceEnabled, userLocation, activities, updateActivityDistance]);
-
-  // to reduce calls to update when setting filter options
-  const debouncedSearchTerm = useMemo(
-    () =>
-      debounce((term) => {
-        setFilterOptions((prev) => ({
-          ...prev,
-          searchTerm: term,
-        }));
-      }, 20),
-    [setFilterOptions] // Include setFilterOptions as a dependency
-  );
+  }, [distanceEnabled, userLocation, activities, updateActivityDistance, setUserLocation]);
 
   const handleSearchChange = (e) => {
     const term = e.target.value;
-    debouncedSearchTerm(term); // Debounced search directly updates filterOptions
+    setFilterOptions((prev) => ({
+      ...prev,
+      searchTerm: term, // Update search term immediately on every keystroke
+    }));
   };
   
   // Function to toggle if activity pinned - passed as prop to each activity card 

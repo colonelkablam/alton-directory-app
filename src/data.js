@@ -77,6 +77,7 @@ export async function fetchActivities() {
         name: row[0],
         description: row[1],
         audience: row[2],
+        audienceOther: [3],
         ageRange: row[4],
         venue: row[5],
         daysOfWeek,

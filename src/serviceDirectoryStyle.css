@@ -50,15 +50,57 @@ h1 {
 }
 
 .detailed-card {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: white;
-  z-index: 1000;
-  overflow-y: auto;
   padding: 20px;
+  background: #fff;
+  max-width: 800px;
+  margin: auto;
+}
+
+.detailed-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+.detailed-title {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.pin-checkbox input {
+  transform: scale(1.5);
+}
+
+.map-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+  border: 1px dashed #ccc;
+  padding: 20px;
+}
+
+.detailed-info {
+  margin-top: 20px;
+}
+
+.detail {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.detail .icon {
+  margin-right: 10px;
 }
 
 /* General card styling */
@@ -85,7 +127,7 @@ h1 {
   margin-bottom: 50px; /* Adds space between day sections */
 }
 
-.card-title-and-checkbox {
+.card-title-and-checkboxes {
   display: flex;
   align-items: center;
   justify-content: space-between; /* Pushes title left and checkbox right */
@@ -98,6 +140,22 @@ h1 {
   margin: 0;
   flex-grow: 1; /* Title takes up available space */
   text-align: center;
+}
+
+.info-icon-container {
+  display: flex;
+  align-items: flex-start; /* Aligns content within checkbox to the top */
+  align-self: flex-start; /* Aligns the checkbox to the top of the container */
+}
+
+.info-icon {
+  color: #007bff; /* Replace with your desired color (hex, rgb, or named color) */
+  width: 40px;
+
+}
+
+.info-icon:hover {
+  color: #6fb5ff; /* Optional: Add a hover effect */
 }
 
 .pin-checkbox {

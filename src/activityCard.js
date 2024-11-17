@@ -32,12 +32,14 @@ function ActivityCard({ activity, togglePin, pinnedActivities, distanceEnabled }
     <div className="card">
       <div className="card-content">
 
-        <div className="card-title-and-checkbox">
-        <button onClick={handleClickToDetails}>
-        <span className="icon">
-              <Info size={20} />
-            </span>
-        </button>
+        <div className="card-title-and-checkboxes">
+          <div 
+            className='info-icon-container' 
+            onClick={handleClickToDetails}
+            title="See a more detailed view of activity"
+          >
+            <Info size={32} className="info-icon" />
+          </div>
 
           <h3 className="card-title two-line-textbox">{activity.name}</h3>
           <div className="pin-checkbox">

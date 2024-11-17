@@ -9,7 +9,7 @@ export const ServiceDirectoryProvider = ({ children }) => {
     cost: [],
     days: [],
     isOneOff: false,
-    maxDistance: MAX_DISTANCE, // default to MAX_DISTANCE
+    maxDistance: MAX_DISTANCE,
     searchTerm: "",
     postcode: "",
   });
@@ -18,6 +18,9 @@ export const ServiceDirectoryProvider = ({ children }) => {
   const [activeTab, setActiveTab] = useState("days");
   const [showFilters, setShowFilters] = useState(false);
   const [distanceEnabled, setDistanceEnabled] = useState(false);
+  const [activities, setActivities] = useState([]);
+  const [userLocation, setUserLocation] = useState(null);
+  const [postcodeIsValid, setPostcodeIsValid] = useState(null);
 
   const value = useMemo(
     () => ({
@@ -25,14 +28,29 @@ export const ServiceDirectoryProvider = ({ children }) => {
       setFilterOptions,
       pinnedActivities,
       setPinnedActivities,
+      activeTab,
+      setActiveTab,
       showFilters,
       setShowFilters,
       distanceEnabled,
       setDistanceEnabled,
-      activeTab,
-      setActiveTab,
+      activities,
+      setActivities,
+      userLocation,
+      setUserLocation,
+      postcodeIsValid,
+      setPostcodeIsValid,
     }),
-    [filterOptions, pinnedActivities, showFilters, distanceEnabled, activeTab]
+    [
+      filterOptions,
+      pinnedActivities,
+      activeTab,
+      showFilters,
+      distanceEnabled,
+      activities,
+      userLocation,
+      postcodeIsValid,
+    ]
   );
 
   return (
