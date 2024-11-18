@@ -31,7 +31,7 @@ body, html {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: Roboto, Helvetica, Arial, sans-serif;
   background-color: rgb(242, 242, 242);
 }
 
@@ -97,26 +97,38 @@ h1 {
 }
 
 .info-icon {
+  cursor: pointer;
   color: #007bff; /* Replace with your desired color (hex, rgb, or named color) */
-  width: 40px;
-
+  transition: transform 0.2s ease;
 }
 
 .info-icon:hover {
+
   color: #6fb5ff; /* Optional: Add a hover effect */
+  transform: scale(1.5);
 }
 
-.pin-checkbox {
+.pin-icon-container {
   display: flex;
   align-items: flex-start; /* Aligns content within checkbox to the top */
   align-self: flex-start; /* Aligns the checkbox to the top of the container */
 }
 
-.pin-checkbox input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: #007bff; /* Customize checkbox color */
+.pin-icon {
   cursor: pointer;
+  fill: none;
+  transition: transform 0.2s ease;
+  color: rgb(167, 167, 167); /* Indicate pinned status */
+}
+
+
+.pin-icon:hover {
+  transform: scale(1.5);
+}
+
+.pin-icon.pinned {
+  fill: rgb(255, 39, 39);
+  color: rgb(255, 39, 39); /* Indicate pinned status */
 }
 
 .card-description {
@@ -181,9 +193,22 @@ h1 {
   margin-top: 3px;
 }
 
+.detail a {
+  text-decoration: none;
+}
+
+.detail a:hover {
+  text-decoration: underline;
+}
+
 .detail-highlight {
   background-color: rgb(228, 228, 228);
   border-radius: 8px;
+}
+
+.icon-detail-highlight {
+  color: green;
+  font-weight: 600;
 }
 
 .icon {
@@ -206,6 +231,16 @@ h1 {
 
   .container {
     padding: 0 10px; /* Adjust padding for smaller screens */
+  }
+
+  .pin-icon:hover {
+    transform: scale(1.0);
+  }
+
+  .info-icon:hover {
+
+    color: #6fb5ff;
+    transform: scale(1.0);
   }
 }
 
@@ -320,7 +355,7 @@ h1 {
   margin: 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  background-color: #f0f0f0;
+  background-color: #ffffff;
   cursor: pointer;
   font-size: 14px;
 }

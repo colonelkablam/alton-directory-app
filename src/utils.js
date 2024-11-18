@@ -9,11 +9,12 @@ export function toggleFilter(array = [], value) {
     : [...array, value];
 }
 
+// utils.js
 export function togglePin(activityId, setPinnedActivities) {
-  setPinnedActivities(prevPinned =>
+  setPinnedActivities((prevPinned) =>
     prevPinned.includes(activityId)
-      ? prevPinned.filter(id => id !== activityId) // Unpin if already pinned
-      : [...prevPinned, activityId] // Pin if not already pinned
+      ? prevPinned.filter((id) => id !== activityId) // Unpin if already pinned
+      : [...prevPinned, activityId] // Pin if not pinned
   );
 }
 

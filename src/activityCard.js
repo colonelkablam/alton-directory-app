@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { MapPin, Clock, User, PoundSterling, Globe, Phone, Users, Footprints, Info } from 'lucide-react';
+import { MapPin, Clock, User, PoundSterling, Globe, Phone, Users, Footprints, Info, Pin } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 
 
@@ -38,17 +38,17 @@ function ActivityCard({ activity, togglePin, pinnedActivities, distanceEnabled }
             onClick={handleClickToDetails}
             title="See a more detailed view of activity"
           >
-            <Info size={32} className="info-icon" />
+            <Info size={26} className="info-icon" />
           </div>
 
           <h3 className="card-title two-line-textbox">{activity.name}</h3>
-          <div className="pin-checkbox">
-            <input
-              type="checkbox"
-              checked={isPinned}
-              onChange={() => togglePin(activity.id)}
-              title="Pin this activity"
-            />
+          <div className="pin-icon-container">
+          <Pin
+            size={26}
+            className={`pin-icon ${isPinned ? 'pinned' : ''}`}
+            onClick={() => togglePin(activity.id, pinnedActivities)}
+            title={isPinned ? 'Unpin this activity' : 'Pin this activity'}
+          />
           </div>
         </div>
 
@@ -104,15 +104,16 @@ function ActivityCard({ activity, togglePin, pinnedActivities, distanceEnabled }
             <span className="icon">
               <PoundSterling size={16} />
             </span>
-            <span>Cost: </span>
-            <span>{activity.cost}</span>
+            <span className='icon-detail-highlight'>
+              {activity.cost}
+            </span>
           </div>
 
           <div className="detail">
             <span className="icon">
               <Phone size={16} />
             </span>
-            <span>{activity.contact}</span>
+            <span>{activity.contacts[0]}</span>
           </div>
 
           <div className="detail">
