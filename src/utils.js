@@ -34,16 +34,6 @@ export function resetFilters(setFilterOptions) {
   });
 }
   
-// Function to check if an activity matches search criteria
-export function matchesSearch(activity, searchTokens) {
-  return searchTokens.length === 0 || searchTokens.some(token =>
-    activity.name.toLowerCase().includes(token) ||
-    activity.description.toLowerCase().includes(token) ||
-    activity.venue.toLowerCase().includes(token) ||
-    activity.organiser.toLowerCase().includes(token)
-  );
-}
-  
 // Get cost type based on activity cost
 export function getCostType(cost) {
   if (!cost) return 'Other';
@@ -82,13 +72,16 @@ export function applyFilters({
     const description = activity.description || '';
     const venue = activity.venue || '';
     const organiser = activity.organiser || '';
+    const audienceOther = activity.audienceOther || '';
+
 
     // Search term matching
     const matchesSearch = searchTokens.length === 0 || searchTokens.some(token =>
       name.toLowerCase().includes(token) ||
       description.toLowerCase().includes(token) ||
       venue.toLowerCase().includes(token) ||
-      organiser.toLowerCase().includes(token)
+      organiser.toLowerCase().includes(token) ||
+      audienceOther.toLowerCase().includes(token)
     );
 
     // Audience matching: only check if there are selected audiences

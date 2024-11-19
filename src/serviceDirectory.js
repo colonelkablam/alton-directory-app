@@ -157,7 +157,7 @@ function ServiceDirectory() {
 
   return (
     <div className="container">
-      <h1>Community Activities</h1>
+      <h1>Community Activity Directory</h1>
 
       {/* Search Bar */}
       <div className="search-bar">

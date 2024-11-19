@@ -19,7 +19,6 @@ export async function fetchActivities() {
     const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     const allDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const other = ["No Set Day"];
-    const weekdaySpreadSheetRow = 16;
 
     // start processing data from gsheet
 
@@ -61,7 +60,7 @@ export async function fetchActivities() {
     const activities = activitiesWithPostcodes.map(({ row, index, lat, long, postcode }) => {
       
       let daysOfWeek;
-      const daysString = row[weekdaySpreadSheetRow] || '';
+      const daysString = row[16] || '';
 
       if (daysString === "Monday-Friday") {
         daysOfWeek = weekdays;
