@@ -37,8 +37,12 @@ function DetailedActivityCard() {
     );
   }
 
+  const timePeriod = activity.timePeriod === "One-off Event"
+    ? activity.timePeriod + ": "
+    : "Time period: ";
+
   const timeInfo = activity.timePeriod === "One-off Event"
-    ? `${activity.oneOffDate} (${activity.timePeriod})`
+    ? activity.oneOffDate
     : activity.timePeriod;
 
   return (
@@ -105,9 +109,8 @@ function DetailedActivityCard() {
             <span>
               {"Time: "} <span className="detailed-bold"> {activity.time} </span> <br />
               {"Days: "} <span className="detailed-bold"> {activity.daysOfWeek.join(", ")} </span> <br />
-              {"Period: "} <span className="detailed-bold">{timeInfo} </span><br />
-              {activity.extraDatesDetails && `Dates info: ${activity.extraDatesDetails}`}
-              {activity.additionalDates && `Additional Dates: ${activity.additionalDates}`}
+              {timePeriod} <span className="detailed-bold">{timeInfo} </span><br />
+              {activity.extraDatesDetails && (<span> Further info: <span className="detailed-bold"> {activity.extraDatesDetails} </span> </span> )}
             </span>
           </div>
 

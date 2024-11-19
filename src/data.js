@@ -73,10 +73,10 @@ export async function fetchActivities() {
       }
 
       const extraAudienceInfo = row[3] || 'n/a';
-      const extraDatesInfo = row[17] || 'no other dates info';
+      const extraDatesInfo = row[17] || 'n/a';
       const booking = row[10] || 'no booking info given';
       const dropIn = row[11] || 'no drop in details given';
-      const doesItCost = row[12] || 'Free';
+      const doesItCost = row[12] || 'no details given';
       const rawContactDetails = row[13] || 'No contact details provided';
 
       // Extract emails and phone numbers safely

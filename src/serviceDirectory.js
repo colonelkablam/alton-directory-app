@@ -8,6 +8,10 @@ import { getUserLocation, fetchCoordinatesFromPostcode, calculateDistance } from
 import DistanceFilter from './distanceFilter.js';
 import FilterOptions from './filterOptions.js';
 import TabbedView from './tabbedView.js';
+import Header from "./header";
+import Footer from "./footer";
+
+
 
 
 // Main Component
@@ -157,7 +161,9 @@ function ServiceDirectory() {
 
   return (
     <div className="container">
-      <h1>Community Activity Directory</h1>
+      <Header /> {/* Add the Header */}
+
+      <h1>Alton Community Activity Directory</h1>
 
       {/* Search Bar */}
       <div className="search-bar">
@@ -262,19 +268,7 @@ function ServiceDirectory() {
       </div>
 
       {/* Footer */}
-      <footer className="footer">
-        <p>
-          &copy; {new Date().getFullYear() }
-          <a 
-            href="https://portfolio.nickharding.org/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="footer-link"
-          >
-            Nick Harding
-          </a>
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 }
