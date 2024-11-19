@@ -217,6 +217,7 @@ h1 {
 }
 
 @media (max-width: 860px) {
+
   .cards-view {
     display: flex; /* Use Flexbox for alignment */
     flex-direction: column; /* Stack cards vertically */
@@ -268,6 +269,13 @@ h1 {
   display: block; /* Forces the last button onto a new line */
   width: 110px; /* Optional: makes the button span the entire width */
   margin-top: 10px; /* Adds space above the last button */
+}
+
+.activity-count {
+  margin-left: 50px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333; /* Adjust color to fit your design */
 }
 
 .one-off-label {

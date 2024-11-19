@@ -191,8 +191,14 @@ function ServiceDirectory() {
           checked={!!showFilters} // Ensure it's always a boolean
           onChange={(e) => setShowFilters(e.target.checked)}
           />
+          
         <h3 className={showFilters ? '' : 'disabled'}>Show All Search Filters</h3>
+        <span className="activity-count">
+        {filteredActivities.length} activities
+      </span>
       </label>
+
+
 
 
       {/* Filter Section */}
