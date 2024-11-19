@@ -6,8 +6,8 @@ function Info() {
   return (
     <div className="container">
       <Header />
-      <h1>Info Page</h1>
-      <p>Provide general information about the directory here.</p>
+      <h1>About Page</h1>
+      <p>General information about the directory will be displayed here.</p>
     </div>
   );
 }
