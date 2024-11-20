@@ -3,8 +3,24 @@
     background: #fff;
     max-width: 800px;
     margin: auto;
+    margin-top: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
+  }
+
+  .detailed-card > h1{
+    margin-top: 0px;
+  }
+
+  .detailed-card > p{
+    text-align: justify;
+  }
+
+
+  @media (max-width: 860px) {
+    .detailed-card {
+      margin-top: 0px;
+    }
   }
   
   .detailed-card-header {

@@ -46,6 +46,10 @@ h1 {
   margin-bottom: 20px;
 }
 
+.boldPara {
+  font-weight: 600;
+}
+
 .inline-div {
   display: inline;
 }
