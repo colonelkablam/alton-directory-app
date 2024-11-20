@@ -4,10 +4,7 @@ import { MapPin, Clock, User, PoundSterling, Phone, Users, Globe, Map, Pin, Arro
 import { ServiceDirectoryContext } from "./serviceDirectoryContext"; // Import the context
 import { togglePin } from './utils.js';
 import './detailedActivityCardStyle.css';
-import { GMAP_API_KEY } from "./constants.js";
-
-//const MAP_API_KEY = 'AIzaSyBcL7h_pXwkv8ekj5RIgdvR4olS9TmS0sM'; // embeded maps api key
-
+import { GMAP_API_KEY } from "./config.js";
 
 
 function DetailedActivityCard() {

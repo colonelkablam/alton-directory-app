@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation  } from "react-router-dom";
 import "./headerStyle.css";
-import { GOOGLE_FORM_INPUT_LINK, GOOGLE_FORM_SUGGESTION_LINK} from "./constants";
+import { GOOGLE_FORM_INPUT_LINK, GOOGLE_FORM_SUGGESTION_LINK} from "./config";
 
 function Header() {
 
