@@ -2,7 +2,7 @@ const axios = require("axios");
 
 exports.handler = async (event, context) => {
 
-  require("dotenv").config(); // Load local .env variables (only for development)
+  //require("dotenv").config(); // Load local .env variables (only for development)
 
   // Use secrets in environment variables
   const SHEET_API_KEY = process.env.ALTON_GOOGLESHEET_API_KEY; 
