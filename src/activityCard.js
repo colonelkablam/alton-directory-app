@@ -36,7 +36,7 @@ function ActivityCard({ activity, togglePin, pinnedActivities, distanceEnabled }
           {/* Info Icon */}
           <div
             className='info-icon-container'
-            onClick={handleClickToDetails}
+            //onClick={(e) => e.stopPropagation()} // Prevent event propagation
             title="See a more detailed view of activity"
           >
             <Info size={28} className="info-icon" />

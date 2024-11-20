@@ -82,7 +82,7 @@ function DetailedActivityCard() {
       </div>
       <div className="warning-text-box">
           <MessageSquareWarning className="warning-icon" size={20}/>
-          <p>pin loactions are based on postcodes or location data provided by users, please check location before attending</p>
+          <p>pin locations are based on a postcode or location data provided by users, please check location is correct before attending</p>
       </div>
 
 
