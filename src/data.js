@@ -1,13 +1,13 @@
 // data.js
 import { UK_POSTCODE_REGEX, EMAIL_REGEX, PHONE_REGEX } from './constants.js';
-import { GSHEET_API_KEY, SHEET_ID, SHEET_NAME } from "./config.js";
 import { isValidLondonCoordinate, fetchCoordinatesFromPostcode } from './navUtils.js';
 
 export async function fetchActivities() {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${GSHEET_API_KEY}`;
 
   try {
-    const response = await fetch(url);
+    //const response = await fetch(url);
+    const response = await fetch("/.netlify/functions/fetchSheet"); // Call your function
+
     const data = await response.json();
 
     // Define arrays for weekdays and the full week
