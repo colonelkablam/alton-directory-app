@@ -1,0 +1,36 @@
+.header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 6px 40px 6px 6px;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #ddd;
+    border-radius: 8px ;
+    margin-top: 10px;
+  }
+  
+  .nav {
+    display: flex;
+    gap: 23px;
+  }
+  
+  .nav-link {
+    text-decoration: none;
+    color: #777777;
+    font-size: medium;
+    font-weight: bold;
+    transition: color 0.3s ease;
+  }
+  
+  .nav-link:hover {
+    color: #007bff;
+  }
+  
+  @media (max-width: 768px) {
+    .header {
+      justify-content: center;
+      padding: 6px 6px 6px 6px;
+
+    }
+  }
+  

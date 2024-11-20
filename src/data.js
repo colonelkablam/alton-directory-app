@@ -1,5 +1,5 @@
 // data.js
-import { UK_POSTCODE_REGEX } from './constants.js';
+import { UK_POSTCODE_REGEX, EMAIL_REGEX, PHONE_REGEX } from './constants.js';
 import { isValidLondonCoordinate, fetchCoordinatesFromPostcode } from './navUtils.js';
 
 
@@ -19,7 +19,6 @@ export async function fetchActivities() {
     const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     const allDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const other = ["No Set Day"];
-    const weekdaySpreadSheetRow = 16;
 
     // start processing data from gsheet
 
@@ -59,8 +58,9 @@ export async function fetchActivities() {
 
     // Step 2: Map the final activity data
     const activities = activitiesWithPostcodes.map(({ row, index, lat, long, postcode }) => {
+      
       let daysOfWeek;
-      const daysString = row[weekdaySpreadSheetRow] || '';
+      const daysString = row[16] || '';
 
       if (daysString === "Monday-Friday") {
         daysOfWeek = weekdays;
@@ -72,11 +72,34 @@ export async function fetchActivities() {
         daysOfWeek = daysString.split(',').map(day => day.trim());
       }
 
+      const extraAudienceInfo = row[3] || 'n/a';
+      const extraDatesInfo = row[17] || 'n/a';
+      const booking = row[10] || 'no booking info given';
+      const dropIn = row[11] || 'no drop in details given';
+      const doesItCost = row[12] || 'no details given';
+      const rawContactDetails = row[13] || 'No contact details provided';
+
+      // Extract emails and phone numbers safely
+      const emails = Array.isArray(rawContactDetails.match(EMAIL_REGEX))
+        ? rawContactDetails.match(EMAIL_REGEX)
+        : []; // Ensure it's always an array
+      const phones = Array.isArray(rawContactDetails.match(PHONE_REGEX))
+        ? rawContactDetails.match(PHONE_REGEX)
+        : []; // Ensure it's always an array
+
+      // Combine the full string and extracted data into an array
+      const contactArray = [
+        rawContactDetails.trim(), // Full original string
+        ...emails.filter(Boolean).map(email => email.trim()), // Filter out invalid values, then trim
+        ...phones.filter(Boolean).map(phone => phone.trim()) // Filter out invalid values, then trim
+      ];
+
       return {
         id: index, // Generate a unique id for each activity - currently just using index as this has to be unique
         name: row[0],
         description: row[1],
         audience: row[2],
+        audienceOther: extraAudienceInfo,
         ageRange: row[4],
         venue: row[5],
         daysOfWeek,
@@ -84,9 +107,12 @@ export async function fetchActivities() {
         timePeriod: row[14],
         oneOffDate: row[15],
         datesDetails: row[16],
+        extraDatesDetails: extraDatesInfo,
         organiser: row[9],
-        cost: row[12],
-        contact: row[13],
+        cost: doesItCost,
+        bookingRequired: booking,
+        dropInAllowed: dropIn,
+        contacts: contactArray,
         fisLink: row[18],
         long,
         lat,

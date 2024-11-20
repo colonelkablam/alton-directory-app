@@ -1,17 +1,14 @@
 // DistanceFilter.js
-import React from 'react';
+import React, { useContext } from "react";
 import { Infinity } from 'lucide-react';
 import {MAX_DISTANCE} from './constants.js';
+import { ServiceDirectoryContext } from "./serviceDirectoryContext";
 
-const DistanceFilter = ({ 
-  distanceEnabled, 
-  setDistanceEnabled, 
-  maxDistance, 
-  handleSliderMovement, 
-  postcode, 
-  handlePostcodeChange, 
-  postcodeIsValid 
-}) => (
+
+const DistanceFilter = ({ maxDistance, handleSliderMovement, postcode, handlePostcodeChange, postcodeIsValid }) => {
+  const { distanceEnabled, setDistanceEnabled } = useContext(ServiceDirectoryContext);
+
+ return (
   <div className="distance-filter">
     <label className="filter-section-checkbox">
       <input
@@ -60,6 +57,7 @@ const DistanceFilter = ({
       />
     </div>
   </div>
-);
+  );
+};
 
 export default DistanceFilter;

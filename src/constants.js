@@ -14,3 +14,14 @@ export const LONDON_LATITUDE_REGEX = /^51\.[2-6]\d*$/;
 
 // Longitude regex constant for London's range (-0.5 to 0.3)
 export const LONDON_LONGITUDE_REGEX = /^-0\.[1-5]\d*$|^0\.[0-3]\d*$/;
+
+// likely email address
+export const EMAIL_REGEX = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i;
+
+// likely phone number
+export const PHONE_REGEX = /(?:\+?\(?\d{1,4}\)?[\s.-]?)+\d{1,}(?=\s|$)/g;
+
+export const GOOGLE_FORM_INPUT_LINK = "https://docs.google.com/forms/d/e/1FAIpQLSdcRUOlHKa0VkSjMEudrHJUBR3y-4x6DJzNXLmrP8dtZg2Ahg/viewform";
+
+export const GOOGLE_FORM_SUGGESTION_LINK = "https://forms.gle/C6YjRjXJgFUuF5qA6";
+

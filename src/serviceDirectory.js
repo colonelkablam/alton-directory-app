@@ -1,45 +1,41 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import debounce from 'lodash.debounce';
+import React, { useEffect, useMemo, useContext, useCallback } from 'react';
+import { ServiceDirectoryContext } from "./serviceDirectoryContext.js";
 import './serviceDirectoryStyle.css';
 import { fetchActivities } from './data.js';
 import { resetFilters, togglePin, applyFilters, clearPinnedActivities} from './utils.js';
-import { DAYS_OF_WEEK, AUDIENCES, COSTS, UK_POSTCODE_REGEX, MAX_DISTANCE} from './constants.js';
+import { DAYS_OF_WEEK, AUDIENCES, COSTS, UK_POSTCODE_REGEX} from './constants.js';
 import { getUserLocation, fetchCoordinatesFromPostcode, calculateDistance } from './navUtils.js';
 import DistanceFilter from './distanceFilter.js';
 import FilterOptions from './filterOptions.js';
 import TabbedView from './tabbedView.js';
+import Header from "./header";
+import Footer from "./footer";
+
+
 
 
 // Main Component
 function ServiceDirectory() {
 
-  // combined filter states
-  const [filterOptions, setFilterOptions] = useState({
-    audience: [],
-    cost: [],
-    days: [],
-    isOneOff: false,
-    maxDistance: MAX_DISTANCE, 
-    searchTerm: '',
-    postcode: ''
-
-  });  
-  // Store pinned activity IDs
-  const [pinnedActivities, setPinnedActivities] = useState([]);
-   // state for active tab view
-  const [activeTab, setActiveTab] = useState('days');
-   // initialise activities array
-  const [activities, setActivities] = useState([]);
-  // user location
-  const [userLocation, setUserLocation] = useState(null);
-  // keep track of if postcode valid
-  const [postcodeIsValid, setPostcodeIsValid] = useState(null);
-   // Distance checkbox state
-  const [distanceEnabled, setDistanceEnabled] = useState(false);
-  // Display More Filetrs state
-  const [showFilters, setShowFilters] = useState(false);
-
-
+  // Access state and setters from the ServiceDirectoryContext
+  const {
+    activeTab,
+    setActiveTab,
+    filterOptions,
+    setFilterOptions,
+    pinnedActivities,
+    setPinnedActivities,
+    showFilters,
+    setShowFilters,
+    distanceEnabled,
+    setDistanceEnabled,
+    activities,
+    setActivities,
+    userLocation,
+    setUserLocation,
+    postcodeIsValid,
+    setPostcodeIsValid,
+  } = useContext(ServiceDirectoryContext);
 
 
   // load in the activity data from the googlesheet using fetchActivities (in data.js)
@@ -49,7 +45,7 @@ function ServiceDirectory() {
       setActivities(data);
     }
     loadActivities();
-  }, []);
+  }, [setActivities]);
 
   // this needs to be declared befor get user location?
   const updateActivityDistance = useCallback((activityId, newDistance) => {
@@ -58,7 +54,7 @@ function ServiceDirectory() {
         activity.id === activityId ? { ...activity, distance: newDistance } : activity
       )
     );
-  }, []);
+  }, [setActivities]);
 
   // Function to get the user's location when distance filter is enabled
   useEffect(() => {
@@ -83,22 +79,14 @@ function ServiceDirectory() {
       }
     }
     fetchLocation();
-  }, [distanceEnabled, userLocation, activities, updateActivityDistance]);
-
-  // to reduce calls to update when setting filter options
-  const debouncedSearchTerm = useMemo(
-    () => debounce((term) => {
-      setFilterOptions(prev => ({
-        ...prev,
-        searchTerm: term
-      }));
-    }, 20),
-    []
-  );
+  }, [distanceEnabled, userLocation, activities, updateActivityDistance, setUserLocation]);
 
   const handleSearchChange = (e) => {
     const term = e.target.value;
-    debouncedSearchTerm(term); // Debounced search directly updates filterOptions
+    setFilterOptions((prev) => ({
+      ...prev,
+      searchTerm: term, // Update search term immediately on every keystroke
+    }));
   };
   
   // Function to toggle if activity pinned - passed as prop to each activity card 
@@ -173,7 +161,9 @@ function ServiceDirectory() {
 
   return (
     <div className="container">
-      <h1>Community Activities</h1>
+      <Header /> {/* Add the Header */}
+
+      <h1>Alton Community Activity Directory</h1>
 
       {/* Search Bar */}
       <div className="search-bar">
@@ -201,8 +191,14 @@ function ServiceDirectory() {
           checked={!!showFilters} // Ensure it's always a boolean
           onChange={(e) => setShowFilters(e.target.checked)}
           />
+          
         <h3 className={showFilters ? '' : 'disabled'}>Show All Search Filters</h3>
+        <span className="activity-count">
+        {filteredActivities.length} activities
+      </span>
       </label>
+
+
 
 
       {/* Filter Section */}
@@ -278,19 +274,7 @@ function ServiceDirectory() {
       </div>
 
       {/* Footer */}
-      <footer className="footer">
-        <p>
-          &copy; {new Date().getFullYear() }
-          <a 
-            href="https://portfolio.nickharding.org/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="footer-link"
-          >
-            Nick Harding
-          </a>
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 }
