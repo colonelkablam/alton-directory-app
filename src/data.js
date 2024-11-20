@@ -1,15 +1,10 @@
 // data.js
 import { UK_POSTCODE_REGEX, EMAIL_REGEX, PHONE_REGEX } from './constants.js';
+import { GSHEET_API_KEY, SHEET_ID, SHEET_NAME } from "./config.js";
 import { isValidLondonCoordinate, fetchCoordinatesFromPostcode } from './navUtils.js';
 
-
-const API_KEY = 'AIzaSyBdKlI9mxJJfv5xsuVFAK7ncjbES2A1kaI'; // Replace with your actual API key
-const SHEET_ID = '1uUiZB1ArpX2KskYTXZ8sMphLWraAm4n_JQO57NXr6U0'; // Replace with your actual Sheet ID
-const SHEET_NAME = 'Directory';
-
-
 export async function fetchActivities() {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${GSHEET_API_KEY}`;
 
   try {
     const response = await fetch(url);

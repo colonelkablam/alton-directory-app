@@ -20,8 +20,3 @@ export const EMAIL_REGEX = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i;
 
 // likely phone number
 export const PHONE_REGEX = /(?:\+?\(?\d{1,4}\)?[\s.-]?)+\d{1,}(?=\s|$)/g;
-
-export const GOOGLE_FORM_INPUT_LINK = "https://docs.google.com/forms/d/e/1FAIpQLSdcRUOlHKa0VkSjMEudrHJUBR3y-4x6DJzNXLmrP8dtZg2Ahg/viewform";
-
-export const GOOGLE_FORM_SUGGESTION_LINK = "https://forms.gle/C6YjRjXJgFUuF5qA6";
-
