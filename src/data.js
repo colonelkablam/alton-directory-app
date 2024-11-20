@@ -3,8 +3,8 @@ import { UK_POSTCODE_REGEX, EMAIL_REGEX, PHONE_REGEX } from './constants.js';
 import { isValidLondonCoordinate, fetchCoordinatesFromPostcode } from './navUtils.js';
 
 
-const API_KEY = 'AIzaSyBdKlI9mxJJfv5xsuVFAK7ncjbES2A1kaI'; // Replace with your actual API key
-const SHEET_ID = '1uUiZB1ArpX2KskYTXZ8sMphLWraAm4n_JQO57NXr6U0'; // Replace with your actual Sheet ID
+const API_KEY = 'AIzaSyBdKlI9mxJJfv5xsuVFAK7ncjbES2A1kaI';
+const SHEET_ID = '1uUiZB1ArpX2KskYTXZ8sMphLWraAm4n_JQO57NXr6U0';
 const SHEET_NAME = 'Directory';
 
 

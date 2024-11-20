@@ -46,9 +46,36 @@ h1 {
   margin-bottom: 20px;
 }
 
-.boldPara {
+.bold-para {
   font-weight: 600;
 }
+
+.small-para {
+  font-size: x-small;
+}
+
+.warning-text-box {
+  display: flex; /* Enables flexbox for this container */
+  justify-content: center; /* Centers elements horizontally */
+  align-items: center; /* Centers elements vertically */
+  padding: 5px; /* Optional: Adds some padding around the content */
+
+}
+
+.warning-text-box > p {
+  display: flex; /* Ensures the paragraph elements behave like a flex container */
+  align-items: center; /* Centers the icon and text vertically */
+  gap: 8px; /* Adds spacing between the icon and the text */
+  margin: 0; /* Removes default paragraph margin for better alignment */
+  font-size: x-small;
+}
+
+.warning-icon {
+  color: orangered;
+  stroke-width: 3px;
+  min-width: 30px;
+}
+
 
 .inline-div {
   display: inline;

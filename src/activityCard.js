@@ -38,7 +38,7 @@ function ActivityCard({ activity, togglePin, pinnedActivities, distanceEnabled }
             onClick={handleClickToDetails}
             title="See a more detailed view of activity"
           >
-            <Info size={26} className="info-icon" />
+            <Info size={28} className="info-icon" />
           </div>
 
           <h3 className="card-title two-line-textbox">{activity.name}</h3>
@@ -54,7 +54,7 @@ function ActivityCard({ activity, togglePin, pinnedActivities, distanceEnabled }
 
         <p className="card-description scrollable-textbox">{activity.description}</p>
 
-        <div className="card-details">
+        <div className="card-details" onClick={handleClickToDetails}>
 
           <div className="detail detail-highlight">
             <span className="icon">

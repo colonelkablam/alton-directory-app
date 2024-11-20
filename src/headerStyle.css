@@ -22,6 +22,10 @@
     font-weight: bold;
     transition: color 0.3s ease;
   }
+
+  .nav-link.active {
+    color: #007bff;
+  }
   
   .nav-link:hover {
     color: #007bff;

@@ -1,9 +1,12 @@
 import React, { useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { MapPin, Clock, User, PoundSterling, Phone, Users, Globe, Map, Pin, ArrowBigLeft } from "lucide-react";
+import { MapPin, Clock, User, PoundSterling, Phone, Users, Globe, Map, Pin, ArrowBigLeft, MessageSquareWarning } from "lucide-react";
 import { ServiceDirectoryContext } from "./serviceDirectoryContext"; // Import the context
 import { togglePin } from './utils.js';
 import './detailedActivityCardStyle.css';
+
+const MAP_API_KEY = 'AIzaSyAAd8dpMD_7Hm02C5fy_RH07Z5LP1hOuBY'; // embeded maps api key
+
 
 
 function DetailedActivityCard() {
@@ -64,9 +67,26 @@ function DetailedActivityCard() {
 
       {/* Map Placeholder */}
       <div className="detailed-map-placeholder">
-        <Map size={64} />
-        <p>Map will be displayed here.</p>
+        {activity.lat && activity.long ? (
+          <iframe
+            title="Activity Location Map"
+            src={`https://www.google.com/maps/embed/v1/place?key=${MAP_API_KEY}&q=${activity.lat},${activity.long}&zoom=15`}
+            allowFullScreen
+            loading="lazy"
+            style={{ border: 0, width: "100%", height: "300px" }}
+          ></iframe>
+        ) : (
+          <p>
+            <Map className="unloaded-map-icon" size={64} /><br />
+            Map currently unavailable - no location details.
+          </p>
+        )}
       </div>
+      <div className="warning-text-box">
+          <MessageSquareWarning className="warning-icon" size={20}/>
+          <p>pin loactions are based on postcodes or location data provided by users, please check location before attending</p>
+      </div>
+
 
       <div className="detailed-content">
         {/* Detailed Description */}
