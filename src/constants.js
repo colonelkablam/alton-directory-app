@@ -25,3 +25,6 @@ export const GOOGLE_FORM_INPUT_LINK = "https://docs.google.com/forms/d/e/1FAIpQL
 
 export const GOOGLE_FORM_SUGGESTION_LINK = "https://forms.gle/C6YjRjXJgFUuF5qA6";
 
+export const GMAP_API_KEY = process.env.ALTON_GMAP_API_KEY;
+export const GSHEET_API_KEY = process.env.ALTON_GSHEET_API_KEY;
+

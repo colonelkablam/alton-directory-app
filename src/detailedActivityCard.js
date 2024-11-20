@@ -4,8 +4,9 @@ import { MapPin, Clock, User, PoundSterling, Phone, Users, Globe, Map, Pin, Arro
 import { ServiceDirectoryContext } from "./serviceDirectoryContext"; // Import the context
 import { togglePin } from './utils.js';
 import './detailedActivityCardStyle.css';
+import { GMAP_API_KEY } from "./constants.js";
 
-const MAP_API_KEY = 'AIzaSyAAd8dpMD_7Hm02C5fy_RH07Z5LP1hOuBY'; // embeded maps api key
+//const MAP_API_KEY = 'AIzaSyBcL7h_pXwkv8ekj5RIgdvR4olS9TmS0sM'; // embeded maps api key
 
 
 
@@ -70,7 +71,7 @@ function DetailedActivityCard() {
         {activity.lat && activity.long ? (
           <iframe
             title="Activity Location Map"
-            src={`https://www.google.com/maps/embed/v1/place?key=${MAP_API_KEY}&q=${activity.lat},${activity.long}&zoom=15`}
+            src={`https://www.google.com/maps/embed/v1/place?key=${GMAP_API_KEY}&q=${activity.lat},${activity.long}&zoom=15`}
             allowFullScreen
             loading="lazy"
             style={{ border: 0, width: "100%", height: "300px" }}

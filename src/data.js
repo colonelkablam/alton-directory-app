@@ -3,13 +3,13 @@ import { UK_POSTCODE_REGEX, EMAIL_REGEX, PHONE_REGEX } from './constants.js';
 import { isValidLondonCoordinate, fetchCoordinatesFromPostcode } from './navUtils.js';
 
 
-const API_KEY = 'AIzaSyBdKlI9mxJJfv5xsuVFAK7ncjbES2A1kaI';
+const GOOGLESHEET_API_KEY = 'AIzaSyAWz9cm23iADsYS6PanC90OOYFVO2T_-zw';
 const SHEET_ID = '1uUiZB1ArpX2KskYTXZ8sMphLWraAm4n_JQO57NXr6U0';
 const SHEET_NAME = 'Directory';
 
 
 export async function fetchActivities() {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${GOOGLESHEET_API_KEY}`;
 
   try {
     const response = await fetch(url);
