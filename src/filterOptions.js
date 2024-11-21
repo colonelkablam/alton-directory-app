@@ -6,15 +6,15 @@ import { DAYS_OF_WEEK, AUDIENCES, COSTS } from './constants.js';
 const FilterOptions = ({ filterOptions, setFilterOptions }) => {
   
   // checks if all the days in DAYS_OF_WEEK are currently selected by comparing them to filterOptions.days
-  const areAllDaysSelected = DAYS_OF_WEEK.every(day => filterOptions.days.includes(day));
+  // const areAllDaysSelected = DAYS_OF_WEEK.every(day => filterOptions.days.includes(day));
 
   // sets filterOptions.days to an empty array ([]) if all days are selected, or sets it to DAYS_OF_WEEK if not
-  const toggleAllDays = () => {
-    setFilterOptions(prev => ({
-      ...prev,
-      days: areAllDaysSelected ? [] : [...DAYS_OF_WEEK],
-    }));
-  };
+  // const toggleAllDays = () => {
+  //   setFilterOptions(prev => ({
+  //     ...prev,
+  //     days: areAllDaysSelected ? [] : [...DAYS_OF_WEEK],
+  //   }));
+  // };
 
   return (
     <div className="filters">
@@ -23,14 +23,14 @@ const FilterOptions = ({ filterOptions, setFilterOptions }) => {
       <div className="filter-section-days">
         <h3>Days</h3>
 
-        {/* Toggle All Button */}
+        {/* Toggle All Button
         <button
           className="filter-button-all"
           onClick={toggleAllDays}
         >
           {areAllDaysSelected ? 'Deselect All' : 'Select All'}
         </button>
-        <br />
+        <br /> */}
         {DAYS_OF_WEEK.map(day => (
           <button
             key={day}
@@ -47,20 +47,36 @@ const FilterOptions = ({ filterOptions, setFilterOptions }) => {
         ))}
       </div>
 
+      {/* No Set Day Filter */}
+      <div className="no-set-day-box">
+        <input
+          type="checkbox"
+          checked={filterOptions.noSetDay}
+          onChange={(e) =>
+            setFilterOptions(prev => ({
+              ...prev,
+              noSetDay: e.target.checked, // Update the noSetDay state
+              isOneOff: e.target.checked ? false : prev.isOneOff, // Deselect isOneOff if noSetDay is selected
+            }))
+          }
+        />
+        Activities with NO SET DAY or do not repeat every week or month
+      </div>
       {/* One-Off Filter */}
-      <label className="one-off-label">
+      <div className="one-off-box">
         <input
           type="checkbox"
           checked={filterOptions.isOneOff}
           onChange={(e) =>
             setFilterOptions(prev => ({
               ...prev,
-              isOneOff: e.target.checked,
+              isOneOff: e.target.checked, // Update the isOneOff state
+              noSetDay: e.target.checked ? false : prev.noSetDay, // Deselect noSetDay if isOneOff is selected
             }))
           }
         />
-        One-off or events that do not repeat every week or month
-      </label>
+        ONE-OFF activities 
+      </div>
       {/* Audience Filter */}
       <div className="filter-section">
         <h3>Audience</h3>

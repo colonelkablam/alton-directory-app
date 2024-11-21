@@ -122,7 +122,7 @@ const TabbedView = ({
           </div>
         ) : (
           <div className="cards=view tab-content-green">
-            <p>No activities match filter search!</p>
+            <p>Please try a different search term or change the search filters to find activities!</p>
           </div>
         );
       
@@ -155,7 +155,7 @@ const TabbedView = ({
                 </div>
               ) : null;
             })}
-            {filteredActivities.length === 0 && <p>No activities match filter search!</p>}
+            {filteredActivities.length === 0 && <p>Please try a different search term or change the search filters to find activities!</p>}
           </div>
         );
   

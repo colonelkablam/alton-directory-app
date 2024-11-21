@@ -2,6 +2,7 @@
 import { calculateDistance } from './navUtils';
 import { MAX_DISTANCE } from "./constants";
 
+
 // Toggle a filter on or off
 export function toggleFilter(array = [], value) {
   return array.includes(value)
@@ -23,15 +24,23 @@ export function clearPinnedActivities(setPinnedActivities) {
 }
   
 // Reset all filters to their default state
-export function resetFilters(setFilterOptions) {
+export function resetFilters(setFilterOptions, setDistanceEnabled) {
   setFilterOptions({
     audience: [],
     cost: [],
     days: [],
     isOneOff: false,
+    noSetDay: false,
     maxDistance: MAX_DISTANCE, // Reset to default
-    searchTerm: ''
+    searchTerm: '',
+    useFilters: false
   });
+
+  // Disable distance filter
+  if (setDistanceEnabled) {
+    setDistanceEnabled(false);
+  }
+
 }
   
 // Get cost type based on activity cost
@@ -50,15 +59,17 @@ export function applyFilters({
   filterAudience = [], 
   filterCost = [], 
   filterDays = [], 
-  isOneOff = false, 
+  isOneOff = false,
+  noSetDay = false,
   maxDistance, 
-  userLocation 
+  userLocation,
+  useFilters = true // linked to show filters
 }) {
   const searchTokens = searchTerm.toLowerCase().split(' ').filter(Boolean);
 
   return activities.map(activity => {
     // Calculate distance if userLocation exists and activity has coordinates
-    if (userLocation && activity.lat && activity.long) {
+    if (useFilters && userLocation && activity.lat && activity.long) {
       const distance = calculateDistance(
         userLocation.lat,
         userLocation.long,
@@ -74,9 +85,8 @@ export function applyFilters({
     const organiser = activity.organiser || '';
     const audienceOther = activity.audienceOther || '';
 
-
     // Search term matching
-    const matchesSearch = searchTokens.length === 0 || searchTokens.some(token =>
+    const matchesSearch = (searchTokens.length === 0 && useFilters) || searchTokens.some(token =>
       name.toLowerCase().includes(token) ||
       description.toLowerCase().includes(token) ||
       venue.toLowerCase().includes(token) ||
@@ -84,9 +94,14 @@ export function applyFilters({
       audienceOther.toLowerCase().includes(token)
     );
 
+    if (!useFilters) {
+      // Only apply search term if filters are disabled
+      return matchesSearch ? activity : null;
+    }
+
     // Audience matching: only check if there are selected audiences
     const matchesAudience = filterAudience.length === 0 || filterAudience.includes(activity.audience);
-    
+
     // Cost matching: only check if there are selected cost types
     const costType = getCostType(activity.cost);
     const matchesCost = filterCost.length === 0 || filterCost.includes(costType);
@@ -94,8 +109,11 @@ export function applyFilters({
     // Day matching: only check if there are selected days
     const matchesDay = filterDays.length === 0 || filterDays.some(day => activity.daysOfWeek.includes(day));
 
+    // No set day matching: only apply if `noSetDay` is true
+    const matchesNoSetDay = !noSetDay || activity.timePeriod === 'Other (non-repeating)' || activity.daysOfWeek[0] ==='No Set Day';
+
     // One-off event matching: only apply if `isOneOff` is true
-    const matchesOneOff = !isOneOff || (activity.timePeriod === 'One-off Event' || activity.timePeriod === 'Other (non-repeating)');
+    const matchesOneOff = !isOneOff || activity.timePeriod === 'One-off Event';
 
     // Distance matching: check if activity.distance is within the maxDistance
     const matchesDistance = 
@@ -104,9 +122,15 @@ export function applyFilters({
       activity.distance == null || 
       (activity.distance != null && activity.distance <= maxDistance);
 
-    return matchesSearch && matchesAudience && matchesCost && matchesDay && matchesOneOff && matchesDistance
-      ? activity
-      : null; // Exclude activities that don't match all filters
+      const isItAMatch = matchesSearch && matchesAudience && matchesCost && matchesDay && matchesNoSetDay && matchesOneOff && matchesDistance;
+
+      // for debugging
+      // if (isItAMatch) {
+      //   console.log(activity);
+      // }
+
+    return isItAMatch ? activity : null; // Exclude activities that don't match all filters
+
   }).filter(Boolean); // Remove nulls
 }
 

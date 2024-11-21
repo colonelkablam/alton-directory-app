@@ -9,6 +9,7 @@ export const ServiceDirectoryProvider = ({ children }) => {
     cost: [],
     days: [],
     isOneOff: false,
+    noSetDay: false,
     maxDistance: MAX_DISTANCE,
     searchTerm: "",
     postcode: "",

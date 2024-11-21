@@ -144,19 +144,21 @@ function ServiceDirectory() {
   };
   
   
-  // Apply filters only when a filter changes
-  const filteredActivities = useMemo(() => {
-    return applyFilters({
-      activities,
-      searchTerm: filterOptions.searchTerm,
-      filterAudience: filterOptions.audience,
-      filterCost: filterOptions.cost,
-      filterDays: filterOptions.days,
-      isOneOff: filterOptions.isOneOff,
-      maxDistance: distanceEnabled ? filterOptions.maxDistance : null,
-      userLocation,
-    });
-  }, [activities, filterOptions, userLocation, distanceEnabled]);
+// Apply filters only when a filter changes
+const filteredActivities = useMemo(() => {
+  return applyFilters({
+    activities,
+    searchTerm: filterOptions.searchTerm,
+    filterAudience: filterOptions.audience,
+    filterCost: filterOptions.cost,
+    filterDays: filterOptions.days,
+    isOneOff: filterOptions.isOneOff,
+    noSetDay: filterOptions.noSetDay,
+    maxDistance: distanceEnabled ? filterOptions.maxDistance : null,
+    userLocation: distanceEnabled ? userLocation : null,
+    useFilters: showFilters // Control whether filters are applied
+  });
+}, [activities, filterOptions, userLocation, distanceEnabled, showFilters]);
 
 
   return (
@@ -176,7 +178,7 @@ function ServiceDirectory() {
         />
         <button
           className="clear-search-button"
-          onClick={() => resetFilters(setFilterOptions)}
+          onClick={() => resetFilters(setFilterOptions, setDistanceEnabled)}
         >
           Clear Search
         </button>
@@ -187,24 +189,22 @@ function ServiceDirectory() {
         <input
           className="enable-content"
           type="checkbox"
-          title="Show all the filter options"
+          title="Use all search filters"
           checked={!!showFilters} // Ensure it's always a boolean
-          onChange={(e) => setShowFilters(e.target.checked)}
-          />
-          
-        <h3 className={showFilters ? '' : 'disabled'}>Show All Search Filters</h3>
+          onChange={(e) => setShowFilters(e.target.checked)} // Update context state
+        />
+        <h3 className={showFilters ? '' : 'disabled'}>
+          {showFilters ? 'Filters Enabled' : 'Use All Search Filters'}
+        </h3>
         <span className="activity-count">
-        {filteredActivities.length} activities
-      </span>
+          {filteredActivities.length} activities
+        </span>
       </label>
-
-
-
 
       {/* Filter Section */}
 
       {showFilters && (
-  <>
+      <>
 
       {/* Distance Slider */}
       <DistanceFilter
@@ -222,8 +222,8 @@ function ServiceDirectory() {
         setFilterOptions={setFilterOptions}
       />
 
-</>
-)}
+      </>
+      )}
 
       {/* Tabs for Viewing Options */}
       <div className="view-tabs">

@@ -291,21 +291,42 @@ h1 {
   align-items: center; /* Center vertically */
 }
 
+.filter-section-checkbox > h3 {
+  width: 230px;
+}
+
 .enable-content {
   width: 20px !important;
   height: 20px !important;
 }
 
 .activity-count {
-  margin-left: 50px;
+  margin-left: 10px;
+  width: 100px;
   font-size: 1rem;
   font-weight: bold;
   color: #333; /* Adjust color to fit your design */
 }
 
-.one-off-label {
+.no-set-day-box {
+  margin-bottom: 10px;
+  margin-top: 20px;
+  font-size: medium;
+}
+
+.no-set-day-box > input {
+  width: 16px;
+  height: 16px;
+}
+
+.one-off-box {
   margin-bottom: 10px;
   font-size: medium;
+}
+
+.one-off-box > input {
+  width: 16px;
+  height: 16px;
 }
 
 .filter-section > h3{
@@ -413,8 +434,7 @@ h1 {
 }
 
 .filter-section-days button:last-child {
-  display: block; /* Forces the last button onto a new line */
-  width: 100px;
+  display: none; /* Forces the last button to not diplay (no set day) - a bit of a hack but otherwise the system is good */
 }
 
 /* General tab button styling */
