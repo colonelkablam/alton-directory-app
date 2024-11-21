@@ -22,28 +22,30 @@
       margin-top: 0px;
     }
   }
+
+  @media print {
+    .detailed-card, .back-icon, .pin-icon, .print-icon {
+      visibility: hidden;
+    }
+
+    .print-wrapper {
+      visibility: visible !important;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+    }
+  
+    .detailed-card-header .detailed-icons {
+      display: none; /* Hide navigation and icons during printing */
+    }
+  }
   
   .detailed-card-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 10px;
-  }
-  
-  .detailed-back-button {
-    background: none;
-    border: none;
-    color: #007bff;
-    cursor: pointer;
-    font-size: 16px;
-    padding: 0px 0px;
-    transition: transform 0.2s ease;
-
-  }
-
-  .detailed-back-button:hover {
-    color: #7cbbff;
-    transform: scale(1.5);
   }
   
   .detailed-title {
@@ -54,13 +56,12 @@
     color: #333;
   }
 
-  .detailed-pin-checkbox  {
-    padding: 10px;
-  }
-
-  .detailed-pin-checkbox input {
-    transform: scale(1.5);
-    padding: 10px;
+  .detailed-icon-box  {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start;
+    align-self: flex-start; 
+    gap: 10px
   }
   
   .detailed-map-placeholder {

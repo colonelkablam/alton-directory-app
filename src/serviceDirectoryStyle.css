@@ -149,9 +149,8 @@ h1 {
   cursor: pointer;
   fill: none;
   transition: transform 0.2s ease;
-  color: rgb(167, 167, 167); /* Indicate pinned status */
+  color: rgb(167, 167, 167);
 }
-
 
 .pin-icon:hover {
   transform: scale(1.5);
@@ -160,6 +159,35 @@ h1 {
 .pin-icon.pinned {
   fill: rgb(255, 39, 39);
   color: rgb(255, 39, 39); /* Indicate pinned status */
+}
+
+.print-icon {
+  cursor: pointer;
+  fill: none;
+  transition: transform 0.2s ease;
+  color: rgb(167, 167, 167);
+}
+
+.print-icon:hover {
+  transform: scale(1.5);
+  color: rgb(1, 148, 13);
+
+}
+
+.back-icon {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0px 0px;
+  transition: transform 0.2s ease;
+
+}
+
+.back-icon:hover {
+  color: #7cbbff;
+  transform: scale(1.5);
 }
 
 .card-description {
@@ -248,7 +276,6 @@ h1 {
 }
 
 @media (max-width: 860px) {
-
   .cards-view {
     display: flex; /* Use Flexbox for alignment */
     flex-direction: column; /* Stack cards vertically */
@@ -270,8 +297,15 @@ h1 {
   }
 
   .info-icon:hover {
+    transform: scale(1.0);
+  }
 
-    color: #6fb5ff;
+  .print-icon:hover {
+    transform: scale(1.0);
+    color: rgb(167, 167, 167);
+  }
+
+  .back-icon:hover {
     transform: scale(1.0);
   }
 }

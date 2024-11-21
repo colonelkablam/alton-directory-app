@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { MapPin, Clock, User, PoundSterling, Phone, Users, Globe, Map, Pin, ArrowBigLeft, MessageSquareWarning } from "lucide-react";
+import { MapPin, Clock, User, PoundSterling, Phone, Users, Globe, Map, Pin, ArrowBigLeft, MessageSquareWarning, Printer } from "lucide-react";
 import { ServiceDirectoryContext } from "./serviceDirectoryContext"; // Import the context
 import { togglePin } from './utils.js';
 import './detailedActivityCardStyle.css';
@@ -16,6 +16,11 @@ function DetailedActivityCard() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // Print handler
+  const handlePrint = () => {
+    window.print();
+  };
 
   // Access the context
   const { pinnedActivities, setPinnedActivities } = useContext(ServiceDirectoryContext);
@@ -48,17 +53,34 @@ function DetailedActivityCard() {
 
   return (
     <div className="detailed-card">
+      <div className="print-wrapper">
       <div className="detailed-card-header">
-        <div onClick={() => navigate(-1)} className="detailed-back-button">
-        <ArrowBigLeft size={42} />
+        <div 
+          className="detailed-icon-box"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowBigLeft
+            size={42}
+            className="back-icon" 
+            title="Go back to main page"
+
+          />
         </div>
         <h1 className="detailed-title">{activity.name}</h1>
-        <div className="detailed-pin-checkbox">
+        <div className="detailed-icon-box">
           <Pin
             size={30}
             className={`pin-icon ${isPinned ? 'pinned' : ''}`} // Conditionally apply style
             onClick={() => togglePin(activity.id, setPinnedActivities)} // Call the pin function
             title={isPinned ? 'Unpin this activity' : 'Pin this activity'}
+          />
+
+          {/* Print button */}
+          <Printer
+            size={30}
+            className="print-icon"
+            onClick={handlePrint} // Trigger print dialog
+            title="Print this activity"
           />
         </div>
       </div>
@@ -195,6 +217,7 @@ function DetailedActivityCard() {
           </div>
         </div>
       </div>
+      </div> {/*End of print wrapper*/}
     </div>
   );
 }
