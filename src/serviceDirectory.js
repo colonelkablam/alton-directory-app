@@ -3,7 +3,7 @@ import { ServiceDirectoryContext } from "./serviceDirectoryContext.js";
 import './serviceDirectoryStyle.css';
 import { fetchActivities } from './data.js';
 import { resetFilters, togglePin, applyFilters, clearPinnedActivities} from './utils.js';
-import { DAYS_OF_WEEK, AUDIENCES, COSTS, UK_POSTCODE_REGEX} from './constants.js';
+import { UK_POSTCODE_REGEX} from './constants.js';
 import { getUserLocation, fetchCoordinatesFromPostcode, calculateDistance } from './navUtils.js';
 import DistanceFilter from './distanceFilter.js';
 import FilterOptions from './filterOptions.js';
@@ -220,9 +220,6 @@ function ServiceDirectory() {
       <FilterOptions
         filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
-        AUDIENCES={AUDIENCES}
-        COSTS={COSTS}
-        DAYS_OF_WEEK={DAYS_OF_WEEK}
       />
 
 </>
