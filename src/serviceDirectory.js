@@ -196,8 +196,20 @@ const filteredActivities = useMemo(() => {
         <h3 className={showFilters ? '' : 'disabled'}>
           {showFilters ? 'Filters Enabled' : 'Use All Search Filters'}
         </h3>
-        <span className="activity-count">
-          {filteredActivities.length} activities
+        <span
+          className={`activity-count ${
+            filteredActivities.length === 0
+              ? filterOptions.searchTerm || showFilters
+                ? 'none-found'
+                : 'no-search'
+              : 'found'
+          }`}
+        >
+          {filteredActivities.length === 0
+            ? (filterOptions.searchTerm || showFilters)
+              ? 'No matches'
+              : `${activities.length} activities in total`
+            : `${filteredActivities.length} activities found`}
         </span>
       </label>
 

@@ -326,7 +326,7 @@ h1 {
 }
 
 .filter-section-checkbox > h3 {
-  width: 230px;
+  width: 185px;
 }
 
 .enable-content {
@@ -336,10 +336,23 @@ h1 {
 
 .activity-count {
   margin-left: 10px;
-  width: 100px;
-  font-size: 1rem;
+  width: 155px;
+  font-size: 1em;
   font-weight: bold;
-  color: #333; /* Adjust color to fit your design */
+  text-align: center;
+  color: #aa0000;
+}
+
+.none-found {
+  color: #aa0000;
+}
+
+.found {
+  color: #008f07;
+}
+
+.no-search {
+  color: #0025cc;
 }
 
 .no-set-day-box {
