@@ -271,6 +271,7 @@ const filteredActivities = useMemo(() => {
       <div className="activities">
       <TabbedView
         activeTab={activeTab}
+        activities={activities}
         filteredActivities={filteredActivities}
         togglePin={handleTogglePin}
         pinnedActivities={pinnedActivities}
@@ -278,7 +279,6 @@ const filteredActivities = useMemo(() => {
         selectedDays={filterOptions.days || []} // Pass days as selectedDays
         clearPinnedActivities={clearPinnedActivities} // Pass the function
         setPinnedActivities={setPinnedActivities} // Pass the state setter
-        
       />
       </div>
 

@@ -5,7 +5,8 @@ import { DAYS_OF_WEEK } from './constants.js';
 
 
 const TabbedView = ({ 
-  activeTab, 
+  activeTab,
+  activities, 
   filteredActivities, 
   togglePin, 
   pinnedActivities, 
@@ -35,7 +36,7 @@ const TabbedView = ({
         
           {/* Render Pinned Activities */}
           {pinnedActivities.length > 0 ? (
-            filteredActivities
+            activities
               .filter(activity => pinnedActivities.includes(activity.id)) // Filter activities based on pinned IDs
               .map(activity => (
                 <ActivityCard
