@@ -518,8 +518,36 @@ h1 {
 }
 
 .tab-button.tab-yellow {
+  position: relative;
   background-color: var(--pinned-panel-colour);
   border-color: var(--pinned-panel-border-colour);
+}
+
+.pinned-count {
+  background-color: red;
+  border-radius: 50%;
+  position: absolute;
+  display: flex; /* Optional, depending on your button layout */
+  align-items: center; /* Center content vertically */
+  justify-content: center; /* Center content horizontally */
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+  bottom: 26px;
+  left: 40px;
+}
+
+.pinned-count.hidden {
+  display: none;
+}
+
+.pinned-count > p{
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  position: absolute;
+  color: white;
 }
 
 /* Hover effects */

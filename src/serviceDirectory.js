@@ -264,6 +264,9 @@ const filteredActivities = useMemo(() => {
           title="See your pinned activities" // This will show on hover
          >
           Pinned
+          <div className={pinnedActivities.length === 0 ? 'pinned-count hidden' : 'pinned-count'}>
+            <p>{pinnedActivities.length}</p>
+          </div>
         </button>
       </div>
 
